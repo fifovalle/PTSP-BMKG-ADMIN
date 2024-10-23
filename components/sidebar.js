@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Typography,
@@ -21,22 +22,39 @@ import {
   DocumentTextIcon,
   ChartBarSquareIcon,
   UserIcon,
+  HomeIcon,
   BuildingOffice2Icon,
 } from "@heroicons/react/24/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
-function Sidebar() {
+function Sidebar({ pengarah }) {
   const [bukaDropdown, setBukaDropdown] = useState(0);
+  const [lokasiSaatIni, setLokasiSaatIni] = useState("");
+
+  useEffect(() => {
+    setLokasiSaatIni(window.location.pathname);
+  }, []);
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 p-2">
         <Typography variant="h3" color="blue-gray">
-          BMKG
+          PTSP BMKG
         </Typography>
       </div>
       <hr className="border border-gray-400" />
+
       <List>
+        <ListItem
+          onClick={() => pengarah.push("/beranda")}
+          className={lokasiSaatIni === "/beranda" ? "bg-blue-200" : ""}
+        >
+          <ListItemPrefix>
+            <HomeIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Beranda
+        </ListItem>
+
         <ListItem className="cursor-default">
           Data
           <ListItemSuffix>
@@ -77,19 +95,28 @@ function Sidebar() {
 
           <AccordionBody className="py-1">
             <List className="p-0">
-              <ListItem>
+              <ListItem
+                onClick={() => pengarah.push("/dataAdmin")}
+                className={lokasiSaatIni === "/dataAdmin" ? "bg-blue-200" : ""}
+              >
                 <ListItemPrefix>
                   <UserCircleIcon className="h-5 w-5" />
                 </ListItemPrefix>
                 Admin
               </ListItem>
-              <ListItem>
+              <ListItem
+                className={lokasiSaatIni === "/pengguna" ? "bg-blue-200" : ""}
+              >
                 <ListItemPrefix>
                   <UserIcon className="h-5 w-5" />
                 </ListItemPrefix>
                 Pengguna
               </ListItem>
-              <ListItem className="border-b-2 border-gray-400">
+              <ListItem
+                className={`${
+                  lokasiSaatIni === "/perusahaan" ? "bg-blue-200" : ""
+                } border-b-2 border-gray-400`}
+              >
                 <ListItemPrefix>
                   <BuildingOffice2Icon className="h-5 w-5" />
                 </ListItemPrefix>
@@ -126,13 +153,19 @@ function Sidebar() {
 
           <AccordionBody className="py-1">
             <List className="p-0">
-              <ListItem>
+              <ListItem
+                className={lokasiSaatIni === "/informasi" ? "bg-blue-200" : ""}
+              >
                 <ListItemPrefix>
                   <InformationCircleIcon className="h-5 w-5" />
                 </ListItemPrefix>
                 Informasi
               </ListItem>
-              <ListItem className="border-b-2 border-gray-400">
+              <ListItem
+                className={`${
+                  lokasiSaatIni === "/jasa" ? "bg-blue-200" : ""
+                } border-b-2 border-gray-400`}
+              >
                 <ListItemPrefix>
                   <CircleStackIcon className="h-5 w-5" />
                 </ListItemPrefix>
@@ -142,21 +175,25 @@ function Sidebar() {
           </AccordionBody>
         </Accordion>
 
-        <ListItem>
+        <ListItem className={lokasiSaatIni === "/ikm" ? "bg-blue-200" : ""}>
           <ListItemPrefix>
             <ChartBarSquareIcon className="h-5 w-5" />
           </ListItemPrefix>
           IKM
         </ListItem>
 
-        <ListItem>
+        <ListItem
+          className={lokasiSaatIni === "/pengajuan" ? "bg-blue-200" : ""}
+        >
           <ListItemPrefix>
             <DocumentTextIcon className="h-5 w-5" />
           </ListItemPrefix>
           Pengajuan
         </ListItem>
 
-        <ListItem>
+        <ListItem
+          className={lokasiSaatIni === "/transaksi" ? "bg-blue-200" : ""}
+        >
           <ListItemPrefix>
             <CreditCardIcon className="h-5 w-5" />
           </ListItemPrefix>
