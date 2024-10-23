@@ -47,7 +47,9 @@ function Sidebar({ pengarah }) {
       <List>
         <ListItem
           onClick={() => pengarah.push("/beranda")}
-          className={lokasiSaatIni === "/beranda" ? "bg-blue-200" : ""}
+          className={
+            lokasiSaatIni === "/beranda" ? "bg-[#0F67B1] text-white" : ""
+          }
         >
           <ListItemPrefix>
             <HomeIcon className="h-5 w-5" />
@@ -69,12 +71,22 @@ function Sidebar({ pengarah }) {
         </ListItem>
 
         <Accordion
-          open={bukaDropdown === 1}
+          open={
+            bukaDropdown === 1 ||
+            lokasiSaatIni === "/dataAdmin" ||
+            lokasiSaatIni === "/dataPengguna" ||
+            lokasiSaatIni === "/dataPerusahaan"
+          }
           icon={
             <ChevronDownIcon
               strokeWidth={2.5}
               className={`mx-auto h-4 w-4 transition-transform ${
-                bukaDropdown === 1 ? "rotate-180" : ""
+                bukaDropdown === 1 ||
+                lokasiSaatIni === "/dataAdmin" ||
+                lokasiSaatIni === "/dataPengguna" ||
+                lokasiSaatIni === "/dataPerusahaan"
+                  ? "rotate-180"
+                  : ""
               }`}
             />
           }
@@ -97,7 +109,11 @@ function Sidebar({ pengarah }) {
             <List className="p-0">
               <ListItem
                 onClick={() => pengarah.push("/dataAdmin")}
-                className={lokasiSaatIni === "/dataAdmin" ? "bg-blue-200" : ""}
+                className={
+                  lokasiSaatIni === "/dataAdmin"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
               >
                 <ListItemPrefix>
                   <UserCircleIcon className="h-5 w-5" />
@@ -105,7 +121,12 @@ function Sidebar({ pengarah }) {
                 Admin
               </ListItem>
               <ListItem
-                className={lokasiSaatIni === "/pengguna" ? "bg-blue-200" : ""}
+                onClick={() => pengarah.push("/dataPengguna")}
+                className={
+                  lokasiSaatIni === "/dataPengguna"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
               >
                 <ListItemPrefix>
                   <UserIcon className="h-5 w-5" />
@@ -113,8 +134,11 @@ function Sidebar({ pengarah }) {
                 Pengguna
               </ListItem>
               <ListItem
+                onClick={() => pengarah.push("/dataPerusahaan")}
                 className={`${
-                  lokasiSaatIni === "/perusahaan" ? "bg-blue-200" : ""
+                  lokasiSaatIni === "/dataPerusahaan"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
                 } border-b-2 border-gray-400`}
               >
                 <ListItemPrefix>
@@ -127,17 +151,25 @@ function Sidebar({ pengarah }) {
         </Accordion>
 
         <Accordion
-          open={bukaDropdown === 2}
+          open={
+            bukaDropdown === 2 ||
+            lokasiSaatIni === "/dataInformasi" ||
+            lokasiSaatIni === "/dataJasa"
+          }
           icon={
             <ChevronDownIcon
               strokeWidth={2.5}
               className={`mx-auto h-4 w-4 transition-transform ${
-                bukaDropdown === 2 ? "rotate-180" : ""
+                bukaDropdown === 2 ||
+                lokasiSaatIni === "/dataInformasi" ||
+                lokasiSaatIni === "/dataJasa"
+                  ? "rotate-180"
+                  : ""
               }`}
             />
           }
         >
-          <ListItem className="p-0" selected={bukaDropdown === 2}>
+          <ListItem className="p-0">
             <AccordionHeader
               onClick={() => setBukaDropdown(bukaDropdown === 2 ? 0 : 2)}
               className="border-b-0 p-3"
@@ -154,7 +186,12 @@ function Sidebar({ pengarah }) {
           <AccordionBody className="py-1">
             <List className="p-0">
               <ListItem
-                className={lokasiSaatIni === "/informasi" ? "bg-blue-200" : ""}
+                onClick={() => pengarah.push("/dataInformasi")}
+                className={
+                  lokasiSaatIni === "/dataInformasi"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
               >
                 <ListItemPrefix>
                   <InformationCircleIcon className="h-5 w-5" />
@@ -162,8 +199,9 @@ function Sidebar({ pengarah }) {
                 Informasi
               </ListItem>
               <ListItem
+                onClick={() => pengarah.push("/dataJasa")}
                 className={`${
-                  lokasiSaatIni === "/jasa" ? "bg-blue-200" : ""
+                  lokasiSaatIni === "/dataJasa" ? "bg-[#0F67B1] text-white" : ""
                 } border-b-2 border-gray-400`}
               >
                 <ListItemPrefix>
@@ -175,7 +213,12 @@ function Sidebar({ pengarah }) {
           </AccordionBody>
         </Accordion>
 
-        <ListItem className={lokasiSaatIni === "/ikm" ? "bg-blue-200" : ""}>
+        <ListItem
+          onClick={() => pengarah.push("/dataIKM")}
+          className={
+            lokasiSaatIni === "/dataIKM" ? "bg-[#0F67B1] text-white" : ""
+          }
+        >
           <ListItemPrefix>
             <ChartBarSquareIcon className="h-5 w-5" />
           </ListItemPrefix>
@@ -183,7 +226,10 @@ function Sidebar({ pengarah }) {
         </ListItem>
 
         <ListItem
-          className={lokasiSaatIni === "/pengajuan" ? "bg-blue-200" : ""}
+          onClick={() => pengarah.push("/dataPengajuan")}
+          className={
+            lokasiSaatIni === "/dataPengajuan" ? "bg-[#0F67B1] text-white" : ""
+          }
         >
           <ListItemPrefix>
             <DocumentTextIcon className="h-5 w-5" />
@@ -192,7 +238,10 @@ function Sidebar({ pengarah }) {
         </ListItem>
 
         <ListItem
-          className={lokasiSaatIni === "/transaksi" ? "bg-blue-200" : ""}
+          onClick={() => pengarah.push("/dataTransaksi")}
+          className={
+            lokasiSaatIni === "/dataTransaksi" ? "bg-[#0F67B1] text-white" : ""
+          }
         >
           <ListItemPrefix>
             <CreditCardIcon className="h-5 w-5" />
@@ -201,13 +250,13 @@ function Sidebar({ pengarah }) {
         </ListItem>
       </List>
 
-      <div className="mt-auto mx-auto cursor-pointer">
-        <img
-          src="https://via.placeholder.com/150"
-          alt="Foto Admin"
-          className="w-16 h-16 rounded-full mx-auto mb-2"
-        />
-        <div className="text-center">Admin</div>
+      <div className="relative mt-auto mx-auto cursor-pointer">
+        <div className="bg-gray-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+          <div className="absolute translate-x-[190%] translate-y-[170%] ">
+            <div className="bg-green-500 w-3 h-3 rounded-full"></div>
+          </div>
+        </div>
+        <div className="text-center font-bold">Nama Admin</div>
         <div className="text-center">Peran Admin</div>
       </div>
     </Card>

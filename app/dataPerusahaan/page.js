@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 // KOMPONEN KAMI
 import Sidebar from "@/components/sidebar";
 import Napbar from "@/components/navbar";
-import Konten from "@/app/beranda/components/konten";
+import Konten from "@/app/dataPerusahaan/components/konten";
 
-const Beranda = () => {
+const DataPerusahaan = () => {
   const pengarah = useRouter();
 
   return (
@@ -20,4 +20,4 @@ const Beranda = () => {
   );
 };
 
-export default Beranda;
+export default DataPerusahaan;

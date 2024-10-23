@@ -1,4 +1,4 @@
-import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -12,17 +12,23 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 
-const judulTabel = ["Admin", "Fungsi", "Status", "Tanggal Pembuatan Akun", ""];
+const judulTabel = [
+  "Informasi",
+  "Harga & Kepemilikan",
+  "Status",
+  "Tanggal Pembuatan Informasi",
+  "",
+];
 
 const kontenTabel = [
   {
     foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Admin",
-    email: "admin@gmail.com",
-    pekerjaan: "Pengelola",
+    nama: "Informasi",
+    deskripsi: "ini Dekripsinya",
+    harga: "Rp 10.000",
     intansi: "Klimatologi BMKG",
     aktif: true,
-    tanggalPembuatanAkun: "23 Februari 2024",
+    tanggalPembuatanInformasi: "23 Februari 2024",
   },
 ];
 
@@ -33,13 +39,13 @@ function Konten() {
         <div className="mb-1 flex items-center justify-between">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Daftar Admin
+              Daftar Informasi
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
-              Tambah Admin
+              Tambah Informasi
             </Button>
           </div>
         </div>
@@ -72,11 +78,11 @@ function Konten() {
                 {
                   foto,
                   nama,
-                  email,
-                  pekerjaan,
+                  deskripsi,
+                  harga,
                   intansi,
                   aktif,
-                  tanggalPembuatanAkun,
+                  tanggalPembuatanInformasi,
                 },
                 index
               ) => {
@@ -103,7 +109,7 @@ function Konten() {
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {email}
+                            {deskripsi}
                           </Typography>
                         </div>
                       </div>
@@ -115,7 +121,7 @@ function Konten() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {pekerjaan}
+                          {harga}
                         </Typography>
                         <Typography
                           variant="small"
@@ -131,7 +137,7 @@ function Konten() {
                         <Chip
                           variant="ghost"
                           size="sm"
-                          value={aktif ? "Aktif" : "Tidak Aktif"}
+                          value={aktif ? "Tersedia" : "Tidak Tersedia"}
                           color={aktif ? "green" : "blue-gray"}
                         />
                       </div>
@@ -142,11 +148,16 @@ function Konten() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {tanggalPembuatanAkun}
+                        {tanggalPembuatanInformasi}
                       </Typography>
                     </td>
                     <td className={kelas}>
-                      <Tooltip content="Hapus Admin">
+                      <Tooltip content="Sunting Informasi">
+                        <IconButton variant="text">
+                          <PencilIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Hapus Informasi">
                         <IconButton variant="text">
                           <TrashIcon className="h-4 w-4" />
                         </IconButton>

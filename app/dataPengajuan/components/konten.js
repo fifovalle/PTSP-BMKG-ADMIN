@@ -1,4 +1,4 @@
-import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -12,17 +12,15 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 
-const judulTabel = ["Admin", "Fungsi", "Status", "Tanggal Pembuatan Akun", ""];
+const judulTabel = ["Pembeli", "Status", "Tanggal Pengajuan", ""];
 
 const kontenTabel = [
   {
     foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Admin",
-    email: "admin@gmail.com",
-    pekerjaan: "Pengelola",
-    intansi: "Klimatologi BMKG",
-    aktif: true,
-    tanggalPembuatanAkun: "23 Februari 2024",
+    nama: "Pengguna",
+    email: "pengguna@gmail.com",
+    status: true,
+    tanggalPengisianPengajuan: "23 Februari 2024",
   },
 ];
 
@@ -33,14 +31,8 @@ function Konten() {
         <div className="mb-1 flex items-center justify-between">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Daftar Admin
+              Daftar Pengajuan
             </Typography>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button className="flex items-center gap-3" size="sm">
-              <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
-              Tambah Admin
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -73,10 +65,10 @@ function Konten() {
                   foto,
                   nama,
                   email,
-                  pekerjaan,
-                  intansi,
-                  aktif,
-                  tanggalPembuatanAkun,
+                  NIK,
+                  Koresponden,
+                  status,
+                  tanggalPengisianPengajuan,
                 },
                 index
               ) => {
@@ -109,30 +101,12 @@ function Konten() {
                       </div>
                     </td>
                     <td className={kelas}>
-                      <div className="flex flex-col">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {pekerjaan}
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {intansi}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={kelas}>
                       <div className="w-max">
                         <Chip
                           variant="ghost"
                           size="sm"
-                          value={aktif ? "Aktif" : "Tidak Aktif"}
-                          color={aktif ? "green" : "blue-gray"}
+                          value={status ? "Diterima" : "Ditolak"}
+                          color={status ? "green" : "blue-gray"}
                         />
                       </div>
                     </td>
@@ -142,11 +116,21 @@ function Konten() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {tanggalPembuatanAkun}
+                        {tanggalPengisianPengajuan}
                       </Typography>
                     </td>
                     <td className={kelas}>
-                      <Tooltip content="Hapus Admin">
+                      <Tooltip content="Lihat Selengkapnya">
+                        <IconButton variant="text">
+                          <EyeIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Sunting Pengajuan">
+                        <IconButton variant="text">
+                          <PencilIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Hapus Pengajuan">
                         <IconButton variant="text">
                           <TrashIcon className="h-4 w-4" />
                         </IconButton>

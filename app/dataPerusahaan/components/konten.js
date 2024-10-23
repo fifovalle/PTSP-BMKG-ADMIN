@@ -1,4 +1,4 @@
-import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -12,15 +12,21 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 
-const judulTabel = ["Admin", "Fungsi", "Status", "Tanggal Pembuatan Akun", ""];
+const judulTabel = [
+  "Perusahaan",
+  "NPWP & Nomor Identitas",
+  "Status",
+  "Tanggal Pembuatan Akun",
+  "",
+];
 
 const kontenTabel = [
   {
     foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Admin",
-    email: "admin@gmail.com",
-    pekerjaan: "Pengelola",
-    intansi: "Klimatologi BMKG",
+    nama: "Perusahaan",
+    email: "perusahaan@gmail.com",
+    nomorIdentitas: "1234",
+    npwp: "2250081109",
     aktif: true,
     tanggalPembuatanAkun: "23 Februari 2024",
   },
@@ -33,14 +39,8 @@ function Konten() {
         <div className="mb-1 flex items-center justify-between">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Daftar Admin
+              Daftar Perusahaan
             </Typography>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button className="flex items-center gap-3" size="sm">
-              <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
-              Tambah Admin
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -73,8 +73,8 @@ function Konten() {
                   foto,
                   nama,
                   email,
-                  pekerjaan,
-                  intansi,
+                  nomorIdentitas,
+                  npwp,
                   aktif,
                   tanggalPembuatanAkun,
                 },
@@ -115,14 +115,14 @@ function Konten() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {pekerjaan}
+                          {nomorIdentitas}
                         </Typography>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal opacity-70"
                         >
-                          {intansi}
+                          {npwp}
                         </Typography>
                       </div>
                     </td>
@@ -146,7 +146,7 @@ function Konten() {
                       </Typography>
                     </td>
                     <td className={kelas}>
-                      <Tooltip content="Hapus Admin">
+                      <Tooltip content="Hapus Perusahaan">
                         <IconButton variant="text">
                           <TrashIcon className="h-4 w-4" />
                         </IconButton>
