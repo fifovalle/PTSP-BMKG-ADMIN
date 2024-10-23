@@ -28,8 +28,6 @@ function Napbar() {
 
   const tambahData = [
     { nama: "Tambah Admin" },
-    { nama: "Tambah Pengguna" },
-    { nama: "Tambah Perusahaan" },
     { nama: "Tambah Informasi" },
     { nama: "Tambah Jasa" },
   ];
@@ -42,7 +40,7 @@ function Napbar() {
   }, []);
 
   return (
-    <Navbar className="mx-5 max-w-screen-2xl px-4 py-2 lg:px-8 lg:py-4 bg-white shadow-md">
+    <Navbar className="max-w-screen-2xl bg-white shadow-md">
       <div className="flex justify-between text-blue-gray-900">
         <div className="items-center gap-x-2 lg:flex w-full">
           <div className="relative flex gap-2 md:w-max">
