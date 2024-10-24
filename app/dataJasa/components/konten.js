@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -11,6 +12,9 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// KOMPONEN KAMI
+import ModalTambahJasa from "@/components/modalTambahJasa";
+import ModalSuntingJasa from "@/components/modalSuntingJasa";
 
 const judulTabel = [
   "Jasa",
@@ -33,6 +37,9 @@ const kontenTabel = [
 ];
 
 function Konten() {
+  const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
+  const [bukaModalSuntingJasa, setBukaModalSuntingJasa] = useState(false);
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -43,7 +50,11 @@ function Konten() {
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button className="flex items-center gap-3" size="sm">
+            <Button
+              onClick={() => setBukaModalTambahJasa(true)}
+              className="flex items-center gap-3"
+              size="sm"
+            >
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
               Tambah Jasa
             </Button>
@@ -153,7 +164,10 @@ function Konten() {
                     </td>
                     <td className={kelas}>
                       <Tooltip content="Sunting Jasa">
-                        <IconButton variant="text">
+                        <IconButton
+                          onClick={() => setBukaModalSuntingJasa(true)}
+                          variant="text"
+                        >
                           <PencilIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
@@ -184,6 +198,16 @@ function Konten() {
           </Button>
         </div>
       </CardFooter>
+
+      <ModalTambahJasa
+        terbuka={bukaModalTambahJasa}
+        tertutup={setBukaModalTambahJasa}
+      />
+
+      <ModalSuntingJasa
+        terbuka={bukaModalSuntingJasa}
+        tertutup={setBukaModalSuntingJasa}
+      />
     </Card>
   );
 }

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -11,6 +12,8 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// KOMPONEN KAMI
+import ModalTambahAdmin from "@/components/modalTambahAdmin";
 
 const judulTabel = ["Admin", "Fungsi", "Status", "Tanggal Pembuatan Akun", ""];
 
@@ -27,6 +30,8 @@ const kontenTabel = [
 ];
 
 function Konten() {
+  const [bukaModalTambahAdmin, setBukaModalTambahAdmin] = useState(false);
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -37,7 +42,11 @@ function Konten() {
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button className="flex items-center gap-3" size="sm">
+            <Button
+              onClick={() => setBukaModalTambahAdmin(true)}
+              className="flex items-center gap-3"
+              size="sm"
+            >
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
               Tambah Admin
             </Button>
@@ -173,6 +182,11 @@ function Konten() {
           </Button>
         </div>
       </CardFooter>
+
+      <ModalTambahAdmin
+        terbuka={bukaModalTambahAdmin}
+        tertutup={() => setBukaModalTambahAdmin(false)}
+      />
     </Card>
   );
 }

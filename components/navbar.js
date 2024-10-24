@@ -11,12 +11,20 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+// KOMPONEN KAMI
+import ModalTambahJasa from "@/components/modalTambahJasa";
+import ModalTambahAdmin from "@/components/modalTambahAdmin";
+import ModalTambahInformasi from "@/components/modalTambahInformasi";
 
 function Napbar() {
   const [masukan, setMasukan] = useState("");
   const [bukaData, setBukaData] = useState(false);
   const [bukaTahun, setBukaTahun] = useState(false);
   const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
+  const [bukaModalTambahAdmin, setBukaModalTambahAdmin] = useState(false);
+  const [bukaModalTambahInformasi, setBukaModalTambahInformasi] =
+    useState(false);
+  const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
 
   const tahun = [
     { tanggal: "Januari 2024" },
@@ -24,12 +32,6 @@ function Napbar() {
     { tanggal: "Maret 2024" },
     { tanggal: "April 2024" },
     { tanggal: "Mei 2024" },
-  ];
-
-  const tambahData = [
-    { nama: "Tambah Admin" },
-    { nama: "Tambah Informasi" },
-    { nama: "Tambah Jasa" },
   ];
 
   useEffect(() => {
@@ -108,16 +110,46 @@ function Napbar() {
                 </Button>
               </MenuHandler>
               <MenuList className="hidden max-h-72 w-20 lg:block">
-                {tambahData.map(({ nama }) => (
-                  <MenuItem key={nama} className="flex items-center gap-2">
-                    {nama}
-                  </MenuItem>
-                ))}
+                <MenuItem
+                  onClick={() => setBukaModalTambahAdmin(true)}
+                  className="flex items-center gap-2"
+                >
+                  Tambah Admin
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => setBukaModalTambahInformasi(true)}
+                  className="flex items-center gap-2"
+                >
+                  Tambah Informasi
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => setBukaModalTambahJasa(true)}
+                  className="flex items-center gap-2"
+                >
+                  Tambah Jasa
+                </MenuItem>
               </MenuList>
             </Menu>
           </div>
         </div>
       </div>
+
+      <ModalTambahAdmin
+        terbuka={bukaModalTambahAdmin}
+        tertutup={setBukaModalTambahAdmin}
+      />
+
+      <ModalTambahInformasi
+        terbuka={bukaModalTambahInformasi}
+        tertutup={setBukaModalTambahInformasi}
+      />
+
+      <ModalTambahJasa
+        terbuka={bukaModalTambahJasa}
+        tertutup={setBukaModalTambahJasa}
+      />
     </Navbar>
   );
 }

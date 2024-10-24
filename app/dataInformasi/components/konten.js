@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -11,6 +12,9 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// KOMPONEN KAMI
+import ModalTambahInformasi from "@/components/modalTambahInformasi";
+import ModalSuntingInformasi from "@/components/modalSuntingInformasi";
 
 const judulTabel = [
   "Informasi",
@@ -33,6 +37,11 @@ const kontenTabel = [
 ];
 
 function Konten() {
+  const [bukaModalTambahInformasi, setBukaModalTambahInformasi] =
+    useState(false);
+  const [bukaModalSuntingInformasi, setBukaModalSuntingInformasi] =
+    useState(false);
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -43,7 +52,11 @@ function Konten() {
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button className="flex items-center gap-3" size="sm">
+            <Button
+              onClick={() => setBukaModalTambahInformasi(true)}
+              className="flex items-center gap-3"
+              size="sm"
+            >
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
               Tambah Informasi
             </Button>
@@ -153,7 +166,10 @@ function Konten() {
                     </td>
                     <td className={kelas}>
                       <Tooltip content="Sunting Informasi">
-                        <IconButton variant="text">
+                        <IconButton
+                          onClick={() => setBukaModalSuntingInformasi(true)}
+                          variant="text"
+                        >
                           <PencilIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
@@ -184,6 +200,16 @@ function Konten() {
           </Button>
         </div>
       </CardFooter>
+
+      <ModalTambahInformasi
+        terbuka={bukaModalTambahInformasi}
+        tertutup={() => setBukaModalTambahInformasi(false)}
+      />
+
+      <ModalSuntingInformasi
+        terbuka={bukaModalSuntingInformasi}
+        tertutup={() => setBukaModalSuntingInformasi(false)}
+      />
     </Card>
   );
 }
