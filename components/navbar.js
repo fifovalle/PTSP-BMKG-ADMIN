@@ -35,10 +35,15 @@ function Napbar() {
   ];
 
   useEffect(() => {
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 960 && setBukaTahun(false)
-    );
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        if (window.innerWidth >= 960) {
+          setBukaTahun(false);
+        }
+      };
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   return (
