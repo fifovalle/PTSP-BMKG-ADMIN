@@ -15,6 +15,13 @@ import {
 // KOMPONEN KAMI
 import ModalTambahJasa from "@/components/modalTambahJasa";
 import ModalSuntingJasa from "@/components/modalSuntingJasa";
+import ModalKonfirmasiHapusJasa from "@/components/modalKonfirmasiHapusJasa";
+// PENGAIT KAMI
+import useTampilkanJasa from "@/hooks/backend/useTampilkanJasa";
+import useHapusJasa from "@/hooks/backend/useHapusJasa";
+// KONSTANTA KAMI
+import { formatRupiah } from "@/constants/formatRupiah";
+import { formatTanggal } from "@/constants/formatTanggal";
 
 const judulTabel = [
   "Jasa",
@@ -24,21 +31,34 @@ const judulTabel = [
   "",
 ];
 
-const kontenTabel = [
-  {
-    foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Jasa",
-    deskripsi: "ini Dekripsinya",
-    harga: "Rp 10.000",
-    intansi: "Klimatologi BMKG",
-    aktif: true,
-    tanggalPembuatanJasa: "23 Februari 2024",
-  },
-];
-
 function Konten() {
   const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
   const [bukaModalSuntingJasa, setBukaModalSuntingJasa] = useState(false);
+  const [bukaModalHapusJasa, setBukaModalHapusJasa] = useState(false);
+  const [jasaYangTerpilih, setJasaYangTerpilih] = useState(null);
+  const { hapusJasa, sedangMemuatHapusJasa } = useHapusJasa();
+  const {
+    halaman,
+    totalJasa,
+    daftarJasa,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    sedangMemuatTampilkanJasa,
+  } = useTampilkanJasa();
+  const konfirmasiHapus = (idJasa) => {
+    setJasaYangTerpilih(idJasa);
+    setBukaModalHapusJasa(true);
+  };
+  const hapus = async () => {
+    if (jasaYangTerpilih) {
+      await hapusJasa(jasaYangTerpilih);
+      setBukaModalHapusJasa(false);
+      setJasaYangTerpilih(null);
+    }
+  };
+  const daftarJasaTerurut = daftarJasa.sort((a, b) => {
+    return b.Tanggal_Pembuatan.seconds - a.Tanggal_Pembuatan.seconds;
+  });
 
   return (
     <Card className="h-full w-full">
@@ -63,137 +83,169 @@ function Konten() {
       </CardHeader>
 
       <CardBody className="overflow-hidden px-0">
-        <table className="mt-4 w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {judulTabel.map((konten) => (
-                <th
-                  key={konten}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+        {sedangMemuat ? (
+          <Typography variant="small" color="blue-gray">
+            Memuat data...
+          </Typography>
+        ) : (
+          <table className="mt-4 w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {judulTabel.map((konten) => (
+                  <th
+                    key={konten}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
-                    {konten}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {konten}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-          <tbody>
-            {kontenTabel.map(
-              (
-                {
-                  foto,
-                  nama,
-                  deskripsi,
-                  harga,
-                  intansi,
-                  aktif,
-                  tanggalPembuatanJasa,
-                },
-                index
-              ) => {
-                const apakahTerakhir = index === kontenTabel.length - 1;
-                const kelas = apakahTerakhir
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+            <tbody>
+              {daftarJasaTerurut.map(
+                (
+                  {
+                    id,
+                    Nama,
+                    Deskripsi,
+                    Harga,
+                    Pemilik,
+                    Status,
+                    Tanggal_Pembuatan,
+                  },
+                  index
+                ) => {
+                  const apakahTerakhir = index === daftarJasaTerurut.length - 1;
+                  const kelas = apakahTerakhir
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={nama}>
-                    <td className={kelas}>
-                      <div className="flex items-center gap-3">
-                        <Avatar src={foto} alt={nama} size="sm" />
+                  return (
+                    <tr key={id}>
+                      <td className={kelas}>
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src="https://via.placeholder.com/150"
+                            alt={Nama}
+                            size="sm"
+                          />
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {Nama}
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {Deskripsi}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={kelas}>
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {nama}
+                            {formatRupiah(Harga)}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {deskripsi}
+                            {Pemilik}
                           </Typography>
                         </div>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <div className="flex flex-col">
+                      </td>
+                      <td className={kelas}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={
+                              Status === "Tersedia"
+                                ? "Tersedia"
+                                : "Tidak Tersedia"
+                            }
+                            color={
+                              Status === "Tersedia" ? "green" : "blue-gray"
+                            }
+                          />
+                        </div>
+                      </td>
+                      <td className={kelas}>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {harga}
+                          {formatTanggal(Tanggal_Pembuatan)}{" "}
                         </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {intansi}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={aktif ? "Tersedia" : "Tidak Tersedia"}
-                          color={aktif ? "green" : "blue-gray"}
-                        />
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {tanggalPembuatanJasa}
-                      </Typography>
-                    </td>
-                    <td className={kelas}>
-                      <Tooltip content="Sunting Jasa">
-                        <IconButton
-                          onClick={() => setBukaModalSuntingJasa(true)}
-                          variant="text"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Hapus Jasa">
-                        <IconButton variant="text">
-                          <TrashIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td className={kelas}>
+                        <Tooltip content="Sunting Jasa">
+                          <IconButton
+                            onClick={() => {
+                              setJasaYangTerpilih(id);
+                              setBukaModalSuntingJasa(true);
+                            }}
+                            variant="text"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip content="Hapus Jasa">
+                          <IconButton
+                            onClick={() => konfirmasiHapus(id)}
+                            variant="text"
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+            </tbody>
+          </table>
+        )}
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Halaman 1 dari 10
+          Halaman {halaman} dari {Math.ceil(totalJasa / 5)}
         </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={ambilHalamanSebelumnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatTampilkanJasa || halaman === 1}
+          >
             Sebelumnya
           </Button>
-          <Button variant="outlined" size="sm">
+          <Button
+            onClick={ambilHalamanSelanjutnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatTampilkanJasa || halaman === 2}
+          >
             Selanjutnya
           </Button>
         </div>
@@ -207,6 +259,15 @@ function Konten() {
       <ModalSuntingJasa
         terbuka={bukaModalSuntingJasa}
         tertutup={setBukaModalSuntingJasa}
+        jasaYangTerpilih={jasaYangTerpilih}
+      />
+
+      <ModalKonfirmasiHapusJasa
+        terbuka={bukaModalHapusJasa}
+        tutupModal={setBukaModalHapusJasa}
+        jasaYangTerpilih={jasaYangTerpilih}
+        konfirmasiHapusJasa={hapus}
+        sedangMemuatHapusJasa={sedangMemuatHapusJasa}
       />
     </Card>
   );

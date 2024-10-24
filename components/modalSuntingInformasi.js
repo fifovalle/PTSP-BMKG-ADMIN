@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   Typography,
@@ -13,9 +13,28 @@ import {
   Textarea,
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
+// PENGAIT KAMI
+import useSuntingInformasi from "@/hooks/backend/useSuntingInformasi";
 
-const ModalSuntingInformasi = ({ terbuka, tertutup }) => {
-  const [pemilikInformasi, setPemilikInformasi] = useState("");
+const ModalSuntingInformasi = ({
+  terbuka,
+  tertutup,
+  informasiYangTerpilih,
+}) => {
+  const {
+    namaInformasi,
+    hargaInformasi,
+    suntingInformasi,
+    pemilikInformasi,
+    setNamaInformasi,
+    setHargaInformasi,
+    deskripsiInformasi,
+    setPemilikInformasi,
+    setDeskripsiInformasi,
+    sedangMemuatSuntingInformasi,
+  } = useSuntingInformasi(informasiYangTerpilih);
 
   return (
     <Dialog
@@ -45,12 +64,23 @@ const ModalSuntingInformasi = ({ terbuka, tertutup }) => {
           <Typography className="-mb-2" variant="h6">
             Nama
           </Typography>
-          <Input label="Masukkan Nama Informasi" size="lg" />
+          <Input
+            label="Masukkan Nama Informasi"
+            size="lg"
+            value={namaInformasi}
+            onChange={(e) => setNamaInformasi(e.target.value)}
+          />
 
           <Typography className="-mb-2" variant="h6">
             Harga
           </Typography>
-          <Input type="number" label="Masukkan Harga Informasi" size="lg" />
+          <Input
+            type="number"
+            label="Masukkan Harga Informasi"
+            size="lg"
+            value={hargaInformasi}
+            onChange={(e) => setHargaInformasi(e.target.value)}
+          />
 
           <Typography className="-mb-2" variant="h6">
             Pemilik Informasi
@@ -69,17 +99,30 @@ const ModalSuntingInformasi = ({ terbuka, tertutup }) => {
           <Typography className="-mb-2" variant="h6">
             Deskripsi
           </Typography>
-          <Textarea label="Masukkan Deskripsi Informasi" size="lg" />
+          <Textarea
+            label="Masukkan Deskripsi Informasi"
+            size="lg"
+            value={deskripsiInformasi}
+            onChange={(e) => setDeskripsiInformasi(e.target.value)}
+          />
         </form>
       </DialogBody>
       <DialogFooter>
         <Button
+          onClick={async () => {
+            await suntingInformasi();
+            tertutup(false);
+          }}
           variant="gradient"
-          color="dark"
-          onClick={() => tertutup(false)}
-          className="font-[family-name:var(--font-geist-sans)]"
+          color="black"
+          disabled={sedangMemuatSuntingInformasi}
+          className={`${
+            sedangMemuatSuntingInformasi
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
         >
-          Sunting Informasi
+          {sedangMemuatSuntingInformasi ? <Memuat /> : "Sunting Informasi"}
         </Button>
       </DialogFooter>
     </Dialog>

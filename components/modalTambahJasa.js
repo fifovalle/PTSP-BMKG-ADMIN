@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   Typography,
@@ -13,9 +13,24 @@ import {
   Textarea,
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+// PENGAIT KAMI
+import useTambahJasa from "@/hooks/backend/useTambahJasa";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
 
 const ModalTambahJasa = ({ terbuka, tertutup }) => {
-  const [pemilikJasa, setPemilikJasa] = useState("");
+  const {
+    namaJasa,
+    hargaJasa,
+    tambahJasa,
+    pemilikJasa,
+    setNamaJasa,
+    setHargaJasa,
+    deskripsiJasa,
+    setPemilikJasa,
+    setDeskripsiJasa,
+    sedangMemuatTambahJasa,
+  } = useTambahJasa();
 
   return (
     <Dialog
@@ -25,7 +40,7 @@ const ModalTambahJasa = ({ terbuka, tertutup }) => {
         mount: { scale: 1, y: 0 },
         unmount: { scale: 0.9, y: -100 },
       }}
-      size="sm"
+      size="md"
       className="bg-white max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-4"
     >
       <div className="absolute top-3 right-3">
@@ -42,17 +57,30 @@ const ModalTambahJasa = ({ terbuka, tertutup }) => {
       <DialogHeader className="text-black">Tambah Jasa Baru</DialogHeader>
       <DialogBody divider>
         <form className="flex flex-col gap-4">
-          <Typography className="-mb-2" variant="h6">
-            Nama
+          <Typography className="mb-2" variant="h6">
+            Nama Jasa
           </Typography>
-          <Input label="Masukkan Nama Jasa" size="lg" />
+          <Input
+            label="Masukkan Nama Jasa"
+            size="lg"
+            value={namaJasa}
+            onChange={(e) => setNamaJasa(e.target.value)}
+            required
+          />
 
-          <Typography className="-mb-2" variant="h6">
+          <Typography className="mb-2" variant="h6">
             Harga
           </Typography>
-          <Input type="number" label="Masukkan Harga Jasa" size="lg" />
+          <Input
+            type="number"
+            label="Masukkan Harga Jasa"
+            size="lg"
+            value={hargaJasa}
+            onChange={(e) => setHargaJasa(e.target.value)}
+            required
+          />
 
-          <Typography className="-mb-2" variant="h6">
+          <Typography className="mb-2" variant="h6">
             Pemilik Jasa
           </Typography>
           <Select
@@ -60,26 +88,42 @@ const ModalTambahJasa = ({ terbuka, tertutup }) => {
             size="lg"
             value={pemilikJasa}
             onChange={(value) => setPemilikJasa(value)}
+            required
           >
+            <Option value="">Pilih Pemilik Jasa</Option>
             <Option value="Meteorologi">Meteorologi</Option>
             <Option value="Klimatologi">Klimatologi</Option>
             <Option value="Geofisika">Geofisika</Option>
           </Select>
 
-          <Typography className="-mb-2" variant="h6">
+          <Typography className="mb-2" variant="h6">
             Deskripsi
           </Typography>
-          <Textarea label="Masukkan Deskripsi Jasa" size="lg" />
+          <Textarea
+            label="Masukkan Deskripsi Jasa"
+            size="lg"
+            value={deskripsiJasa}
+            onChange={(e) => setDeskripsiJasa(e.target.value)}
+            required
+          />
         </form>
       </DialogBody>
       <DialogFooter>
         <Button
+          disabled={sedangMemuatTambahJasa}
           variant="gradient"
           color="dark"
-          onClick={() => tertutup(false)}
-          className="font-[family-name:var(--font-geist-sans)]"
+          onClick={async () => {
+            await tambahJasa();
+            tertutup(false);
+          }}
+          className={`${
+            sedangMemuatTambahJasa
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
         >
-          Tambah Jasa
+          {sedangMemuatTambahJasa ? <Memuat /> : "Simpan"}
         </Button>
       </DialogFooter>
     </Dialog>

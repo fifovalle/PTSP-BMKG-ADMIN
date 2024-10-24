@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   Typography,
@@ -12,10 +12,29 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+// PENGAIT KAMI
+import useTambahAdmin from "@/hooks/backend/useTambahAdmin";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
 
 const ModalTambahAdmin = ({ terbuka, tertutup }) => {
-  const [jenisKelamin, setJenisKelamin] = useState("");
-  const [peranAdmin, setPeranAdmin] = useState("");
+  const {
+    email,
+    setEmail,
+    namaDepan,
+    peranAdmin,
+    tambahAdmin,
+    setNamaDepan,
+    namaBelakang,
+    namaPengguna,
+    jenisKelamin,
+    setPeranAdmin,
+    setNamaBelakang,
+    setNamaPengguna,
+    setJenisKelamin,
+    aturUlangFormulir,
+    sedangMemuatTambahAdmin,
+  } = useTambahAdmin();
 
   return (
     <Dialog
@@ -47,14 +66,24 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
               <Typography className="mb-2" variant="h6">
                 Nama Depan
               </Typography>
-              <Input label="Masukkan Nama Depan" size="lg" />
+              <Input
+                label="Masukkan Nama Depan"
+                size="lg"
+                value={namaDepan}
+                onChange={(e) => setNamaDepan(e.target.value)}
+              />
             </div>
 
             <div className="w-full">
               <Typography className="mb-2" variant="h6">
                 Nama Belakang
               </Typography>
-              <Input label="Masukkan Nama Belakang" size="lg" />
+              <Input
+                label="Masukkan Nama Belakang"
+                size="lg"
+                value={namaBelakang}
+                onChange={(e) => setNamaBelakang(e.target.value)}
+              />
             </div>
           </div>
 
@@ -63,14 +92,24 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
               <Typography className="mb-2" variant="h6">
                 Nama Pengguna
               </Typography>
-              <Input label="Masukkan Nama Pengguna" size="lg" />
+              <Input
+                label="Masukkan Nama Pengguna"
+                size="lg"
+                value={namaPengguna}
+                onChange={(e) => setNamaPengguna(e.target.value)}
+              />
             </div>
 
             <div className="w-full">
               <Typography className="mb-2" variant="h6">
                 Email
               </Typography>
-              <Input label="Masukkan Email" size="lg" />
+              <Input
+                label="Masukkan Email"
+                size="lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
 
@@ -103,12 +142,20 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
       </DialogBody>
       <DialogFooter>
         <Button
+          disabled={sedangMemuatTambahAdmin}
           variant="gradient"
           color="dark"
-          onClick={() => tertutup(false)}
-          className="font-[family-name:var(--font-geist-sans)]"
+          onClick={async () => {
+            await tambahAdmin();
+            tertutup(false);
+          }}
+          className={`${
+            sedangMemuatTambahAdmin
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
         >
-          Tambah Admin
+          {sedangMemuatTambahAdmin ? <Memuat /> : "Simpan"}
         </Button>
       </DialogFooter>
     </Dialog>

@@ -93,7 +93,7 @@ const GrafikPartisipan = () => {
         opacity: 0.8,
       },
       tooltip: {
-        theme: "dark",
+        theme: "light",
       },
     },
   };
@@ -106,7 +106,7 @@ const GrafikPartisipan = () => {
         color="transparent"
         className="flex flex-col gap-4 rounded-none md:flex-row md:items-center"
       >
-        <div className="w-max rounded-lg bg-gray-900 p-5 text-white">
+        <div className="w-max rounded-lg bg-[#0F67B1] p-5 text-white">
           <UserGroupIcon className="h-6 w-6" />
         </div>
         <div>
