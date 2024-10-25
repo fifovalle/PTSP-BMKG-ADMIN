@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
 
 const useTampilkanAdmin = (batasHalaman = 5) => {
-  const [sedangMemuatTampilkan, setSedangMemuatTampilkanAdmin] =
+  const [sedangMemuatTampilkanAdmin, setSedangMemuatTampilkanAdmin] =
     useState(false);
   const [daftarAdmin, setDaftarAdmin] = useState([]);
   const [totalAdmin, setTotalAdmin] = useState(0);
@@ -63,9 +63,9 @@ const useTampilkanAdmin = (batasHalaman = 5) => {
     halaman,
     totalAdmin,
     daftarAdmin,
-    sedangMemuatTampilkan,
     ambilAdminSebelumnya,
     ambilAdminSelanjutnya,
+    sedangMemuatTampilkanAdmin,
   };
 };
 

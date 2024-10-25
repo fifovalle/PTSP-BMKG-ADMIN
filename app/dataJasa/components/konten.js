@@ -19,9 +19,11 @@ import ModalKonfirmasiHapusJasa from "@/components/modalKonfirmasiHapusJasa";
 // PENGAIT KAMI
 import useTampilkanJasa from "@/hooks/backend/useTampilkanJasa";
 import useHapusJasa from "@/hooks/backend/useHapusJasa";
+import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 // KONSTANTA KAMI
 import { formatRupiah } from "@/constants/formatRupiah";
 import { formatTanggal } from "@/constants/formatTanggal";
+import { bulan } from "@/constants/bulan";
 
 const judulTabel = [
   "Jasa",
@@ -31,12 +33,13 @@ const judulTabel = [
   "",
 ];
 
-function Konten() {
+function Konten({ tahunDipilih }) {
   const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
   const [bukaModalSuntingJasa, setBukaModalSuntingJasa] = useState(false);
   const [bukaModalHapusJasa, setBukaModalHapusJasa] = useState(false);
   const [jasaYangTerpilih, setJasaYangTerpilih] = useState(null);
   const { hapusJasa, sedangMemuatHapusJasa } = useHapusJasa();
+  const dataBulanTahun = useTampilkanDataPerTahun();
   const {
     halaman,
     totalJasa,
@@ -58,6 +61,27 @@ function Konten() {
   };
   const daftarJasaTerurut = daftarJasa.sort((a, b) => {
     return b.Tanggal_Pembuatan.seconds - a.Tanggal_Pembuatan.seconds;
+  });
+
+  const saringJasa = daftarJasa.filter((item) => {
+    const tanggal = item.Tanggal_Pembuatan_Akun || item.Tanggal_Pembuatan;
+    if (!tanggal) return false;
+    const dateObj =
+      tanggal instanceof Date ? tanggal : new Date(tanggal.seconds * 1000);
+    const tahun = dateObj.getFullYear();
+    const bulanIndex = dateObj.getMonth();
+    if (tahunDipilih === "Pilih Tahun") {
+      return true;
+    }
+    if (!dataBulanTahun || dataBulanTahun.length === 0) {
+      return false;
+    }
+    if (bulanIndex < 0 || bulanIndex >= 12) {
+      return false;
+    }
+    const bulanNama = bulan[bulanIndex];
+    const bulanTahunDipilih = `${bulanNama} ${tahun}`;
+    return bulanTahunDipilih === tahunDipilih;
   });
 
   return (
@@ -83,7 +107,7 @@ function Konten() {
       </CardHeader>
 
       <CardBody className="overflow-hidden px-0">
-        {sedangMemuat ? (
+        {sedangMemuatTampilkanJasa ? (
           <Typography variant="small" color="blue-gray">
             Memuat data...
           </Typography>
@@ -109,7 +133,7 @@ function Konten() {
             </thead>
 
             <tbody>
-              {daftarJasaTerurut.map(
+              {saringJasa.map(
                 (
                   {
                     id,
@@ -122,7 +146,7 @@ function Konten() {
                   },
                   index
                 ) => {
-                  const apakahTerakhir = index === daftarJasaTerurut.length - 1;
+                  const apakahTerakhir = index === daftarJasa.length - 1;
                   const kelas = apakahTerakhir
                     ? "p-4"
                     : "p-4 border-b border-blue-gray-50";

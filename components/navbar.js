@@ -15,24 +15,17 @@ import {
 import ModalTambahJasa from "@/components/modalTambahJasa";
 import ModalTambahAdmin from "@/components/modalTambahAdmin";
 import ModalTambahInformasi from "@/components/modalTambahInformasi";
+import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 
-function Napbar() {
+function Napbar({ tahunDipilih, setTahunDipilih }) {
   const [masukan, setMasukan] = useState("");
   const [bukaData, setBukaData] = useState(false);
   const [bukaTahun, setBukaTahun] = useState(false);
-  const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
   const [bukaModalTambahAdmin, setBukaModalTambahAdmin] = useState(false);
   const [bukaModalTambahInformasi, setBukaModalTambahInformasi] =
     useState(false);
   const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
-
-  const tahun = [
-    { tanggal: "Januari 2024" },
-    { tanggal: "Februari 2024" },
-    { tanggal: "Maret 2024" },
-    { tanggal: "April 2024" },
-    { tanggal: "Mei 2024" },
-  ];
+  const dataBulanTahun = useTampilkanDataPerTahun();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -87,13 +80,13 @@ function Napbar() {
                 </Button>
               </MenuHandler>
               <MenuList className="hidden max-h-72 w-52 lg:block">
-                {tahun.map(({ tanggal }) => (
+                {dataBulanTahun.map((data, indeks) => (
                   <MenuItem
-                    key={tanggal}
+                    key={indeks}
                     className="flex gap-2"
-                    onClick={() => setTahunDipilih(tanggal)}
+                    onClick={() => setTahunDipilih(data)}
                   >
-                    {tanggal}
+                    {data}
                   </MenuItem>
                 ))}
               </MenuList>

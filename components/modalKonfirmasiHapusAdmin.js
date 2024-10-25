@@ -11,12 +11,12 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 
-const ModalKonfirmasiHapusInformasi = ({
+const ModalKonfirmasiHapusAdmin = ({
   terbuka,
   tertutup,
-  informasiYangTerpilih,
-  konfirmasiHapusInformasi,
-  sedangMemuatHapusInformasi,
+  adminYangTerpilih,
+  konfirmasiHapusAdmin,
+  sedangMemuatHapus,
 }) => {
   return (
     <Dialog
@@ -41,28 +41,26 @@ const ModalKonfirmasiHapusInformasi = ({
       <DialogBody className="text-black">
         <p>
           Apakah Anda yakin ingin menghapus informasi{" "}
-          <strong className="font-bold">{informasiYangTerpilih}</strong>?
-          Tindakan ini tidak dapat dibatalkan.
+          <strong className="font-bold">{adminYangTerpilih}</strong>? Tindakan
+          ini tidak dapat dibatalkan.
         </p>
       </DialogBody>
 
       <DialogFooter className="space-x-4">
         <Button
-          onClick={konfirmasiHapusInformasi}
+          onClick={konfirmasiHapusAdmin}
           variant="gradient"
           color="red"
-          disabled={sedangMemuatHapusInformasi}
+          disabled={sedangMemuatHapus}
           className={`${
-            sedangMemuatHapusInformasi
-              ? "opacity-50 cursor-not-allowed"
-              : "opacity-100"
+            sedangMemuatHapus ? "opacity-50 cursor-not-allowed" : "opacity-100"
           }`}
         >
-          {sedangMemuatHapusInformasi ? <Memuat /> : "Hapus Informasi"}{" "}
+          {sedangMemuatHapus ? <Memuat /> : "Hapus Admin"}{" "}
         </Button>
       </DialogFooter>
     </Dialog>
   );
 };
 
-export default ModalKonfirmasiHapusInformasi;
+export default ModalKonfirmasiHapusAdmin;

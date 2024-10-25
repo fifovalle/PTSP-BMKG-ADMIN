@@ -27,25 +27,16 @@ export default function useSuntingInformasi(idInformasi) {
     } catch (error) {}
   };
 
-  const validasiFormulir = () => {
-    if (!namaInformasi) {
-      toast.error("Masukkan nama informasi");
-      return false;
-    }
-    if (!hargaInformasi) {
-      toast.error("Masukkan harga informasi");
-      return false;
-    }
-    if (!pemilikInformasi) {
-      toast.error("Pilih pemilik informasi");
-      return false;
-    }
-    if (!deskripsiInformasi) {
-      toast.error("Ketik Deskripsi informasi");
-      return false;
-    }
-    return true;
-  };
+  const validasiFormulir = () =>
+    !namaInformasi
+      ? (toast.error("Masukkan nama informasi"), false)
+      : !hargaInformasi
+      ? (toast.error("Masukkan harga informasi"), false)
+      : !pemilikInformasi
+      ? (toast.error("Pilih pemilik informasi"), false)
+      : !deskripsiInformasi
+      ? (toast.error("Ketik Deskripsi informasi"), false)
+      : true;
 
   const suntingInformasi = async () => {
     setSedangMemuatSuntingInformasi(true);
@@ -63,7 +54,6 @@ export default function useSuntingInformasi(idInformasi) {
         Pemilik: pemilikInformasi,
         Deskripsi: deskripsiInformasi,
       });
-
       toast.success("Jasa berhasil disunting!");
     } catch (error) {
       toast.error("Gagal menyunting jasa: " + error.message);

@@ -5,24 +5,24 @@ import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
 
 const useHapusAdmin = () => {
-  const [sedangMemuatHapus, setSedangMemuatHapus] = useState(false);
+  const [sedangMemuatHapusAdmin, setSedangMemuatHapusAdmin] = useState(false);
 
   const hapusAdmin = async (id) => {
     try {
-      setSedangMemuatHapus(true);
+      setSedangMemuatHapusAdmin(true);
       const referensiAdmin = doc(database, "admin", id);
       await deleteDoc(referensiAdmin);
       toast.success("Admin berhasil dihapus!");
     } catch (error) {
       toast.error("Terjadi kesalahan saat menghapus admin: " + error.message);
     } finally {
-      setSedangMemuatHapus(false);
+      setSedangMemuatHapusAdmin(false);
     }
   };
 
   return {
-    sedangMemuatHapus,
     hapusAdmin,
+    sedangMemuatHapusAdmin,
   };
 };
 

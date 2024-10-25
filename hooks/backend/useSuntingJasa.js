@@ -26,25 +26,16 @@ export default function useSuntingJasa(idJasa) {
     } catch (error) {}
   };
 
-  const validasiFormulir = () => {
-    if (!namaJasa) {
-      toast.error("Masukkan nama jasa");
-      return false;
-    }
-    if (!hargaJasa) {
-      toast.error("Masukkan harga jasa");
-      return false;
-    }
-    if (!pemilikJasa) {
-      toast.error("Pilih pemilik jasa");
-      return false;
-    }
-    if (!deskripsiJasa) {
-      toast.error("Ketik Deskripsi jasa");
-      return false;
-    }
-    return true;
-  };
+  const validasiFormulir = () =>
+    !namaJasa
+      ? (toast.error("Masukkan nama jasa"), false)
+      : !hargaJasa
+      ? (toast.error("Masukkan harga jasa"), false)
+      : !pemilikJasa
+      ? (toast.error("Pilih pemilik jasa"), false)
+      : !deskripsiJasa
+      ? (toast.error("Ketik Deskripsi jasa"), false)
+      : true;
 
   const suntingJasa = async () => {
     setSedangMemuatSuntingJasa(true);
