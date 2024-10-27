@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Card,
   Typography,
@@ -28,16 +28,23 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
+// PENGAIT KAMI
+import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
+import useKeluarAkun from "@/hooks/backend/useKeluarAkun";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
 
 function Sidebar({ pengarah }) {
+  const gambarBawaan = require("@/assets/images/profil.jpg");
   const [bukaDropdown, setBukaDropdown] = useState(0);
   const [bukaDropdown2, setBukaDropdown2] = useState(0);
   const [bukaDropdown3, setBukaDropdown3] = useState(0);
   const [lokasiSaatIni, setLokasiSaatIni] = useState("");
+  const { adminData, memuatTampilkanAdminSesuaiID } =
+    useTampilkanAdminSesuaiID();
 
-  useEffect(() => {
-    setLokasiSaatIni(window.location.pathname);
-  }, []);
+  const { keluar, memuat } = useKeluarAkun();
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
@@ -305,7 +312,7 @@ function Sidebar({ pengarah }) {
                 Profil Saya
               </ListItem>
               <ListItem
-                onClick={() => pengarah.push("/Keluar")}
+                onClick={keluar}
                 className={
                   lokasiSaatIni === "/Keluar" ? "bg-[#0F67B1] text-white" : ""
                 }
@@ -321,13 +328,34 @@ function Sidebar({ pengarah }) {
       </List>
 
       <div className="relative mt-20 mx-auto cursor-pointer">
-        <div className="bg-gray-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-          <div className="absolute translate-x-[190%] translate-y-[170%] ">
-            <div className="bg-green-500 w-3 h-3 rounded-full"></div>
-          </div>
-        </div>
-        <div className="text-center font-bold">Nama Admin</div>
-        <div className="text-center">Peran Admin</div>
+        {memuatTampilkanAdminSesuaiID ? (
+          <Memuat />
+        ) : (
+          <>
+            {adminData ? (
+              <>
+                <div className="bg-gray-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                  <Image
+                    src={adminData.Foto || gambarBawaan}
+                    alt={adminData.Nama_Pengguna}
+                    width={60}
+                    height={60}
+                    className="rounded-full"
+                  />
+                  <div className="absolute translate-x-[190%] translate-y-[170%]">
+                    <div className="bg-green-500 w-3 h-3 rounded-full" />
+                  </div>
+                </div>
+                <div className="text-center font-bold">
+                  {adminData.Nama_Pengguna}
+                </div>
+                <div className="text-center">{adminData.Peran}</div>
+              </>
+            ) : (
+              <div className="text-center">Admin tidak ditemukan</div>
+            )}
+          </>
+        )}
       </div>
     </Card>
   );

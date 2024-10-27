@@ -3,7 +3,13 @@ import Image from "next/image";
 import { Button, Card, Typography, Input } from "@material-tailwind/react";
 import { AtSymbolIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
+// PENGAIT KAMI
+import useMasukDenganEmailKataSandi from "@/hooks/backend/useMasukDenganEmailKataSandi";
 
 export default function Masuk() {
   const logoMasuk = require("@/assets/images/logoMasuk.png");
@@ -11,6 +17,15 @@ export default function Masuk() {
   const partikel2 = require("@/assets/images/bumi1.png");
   const partikel3 = require("@/assets/images/bumi2.png");
   const [lihatKataSandi, setLihatKataSandi] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { masukDenganEmail, sedangMemuat } = useMasukDenganEmailKataSandi();
+
+  const handleLogin = () => {
+    masukDenganEmail(email, password);
+  };
+
   const popUpAnimasi = {
     hidden: { scale: 0, y: 0 },
     visible: {
@@ -46,8 +61,9 @@ export default function Masuk() {
 
   return (
     <div className="bg-[#eff0f3] h-screen w-full p-28 flex justify-center">
+      <ToastContainer />
       <Card className="w-full bg-[#0F67B1] rounded-br-none rounded-tr-none shadow-lg">
-        <div className="flex justify-center items-center h-screen  mt-40">
+        <div className="flex justify-center items-center h-screen mt-40">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -80,7 +96,7 @@ export default function Masuk() {
             <Image
               src={partikel1}
               alt="Masuk"
-              className="w-10 h-10 object-cover rounded-full p-2  relative"
+              className="w-10 h-10 object-cover rounded-full p-2 relative"
             />
           </motion.div>
         </div>
@@ -106,14 +122,18 @@ export default function Masuk() {
             className="hover:border-2 hover:border-[#0F67B1] focus:border-2 focus:border-[#0F67B1]"
             label="Email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <AtSymbolIcon className="h-6 w-6 absolute top-2 right-4 text-[#0F67B1] " />
+          <AtSymbolIcon className="h-6 w-6 absolute top-2 right-4 text-[#0F67B1]" />
         </div>
         <div className="w-[470px] self-center mt-8 relative">
           <Input
             className="hover:border-2 hover:border-[#0F67B1] focus:border-2 focus:border-[#0F67B1]"
             label="Kata Sandi"
             type={lihatKataSandi ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           {lihatKataSandi ? (
             <EyeSlashIcon
@@ -132,8 +152,12 @@ export default function Masuk() {
             Lupa Sandi?
           </Typography>
         </div>
-        <Button className="w-[470px] self-center text-center text-md font-body bg-[#0F67B1] rounded-lg p-3 mt-4 hover:scale-95 hover:bg-[#0F67B1] transition-all duration-200">
-          Masuk
+        <Button
+          className="w-[470px] self-center text-center text-md font-body bg-[#0F67B1] rounded-lg p-3 mt-4 hover:scale-95 hover:bg-[#0F67B1] transition-all duration-200"
+          onClick={handleLogin}
+          disabled={sedangMemuat}
+        >
+          {sedangMemuat ? "Memuat..." : "Masuk"}{" "}
         </Button>
       </Card>
     </div>

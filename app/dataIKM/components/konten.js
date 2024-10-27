@@ -1,4 +1,8 @@
-import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowDownTrayIcon,
+  EyeIcon,
+  TrashIcon,
+} from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -11,6 +15,8 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// PENGAIT KAMI
+import useKonversiDataIKMKePdf from "@/hooks/backend/useKonversiDataIKMKePdf";
 
 const judulTabel = [
   "Pembeli",
@@ -33,6 +39,8 @@ const kontenTabel = [
 ];
 
 function Konten() {
+  const { unduhPdf } = useKonversiDataIKMKePdf();
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -147,10 +155,17 @@ function Konten() {
                     </td>
                     <td className={kelas}>
                       <Tooltip content="Unduh IKM">
-                        <IconButton variant="text">
+                        <IconButton variant="text" onClick={unduhPdf}>
                           <ArrowDownTrayIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
+
+                      <Tooltip content="Selengkapnya">
+                        <IconButton variant="text">
+                          <EyeIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+
                       <Tooltip content="Hapus IKM">
                         <IconButton variant="text">
                           <TrashIcon className="h-4 w-4" />

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
-import { database } from "@/lib/firebaseConfig";
+import { database, auth } from "@/lib/firebaseConfig";
 
 const useTambahAdmin = () => {
   const [namaDepan, setNamaDepan] = useState("");
@@ -52,20 +53,26 @@ const useTambahAdmin = () => {
 
     setSedangMemuatTambahAdmin(true);
 
-    const referensiAdmin = collection(database, "admin");
-    const dataAdmin = {
-      Nama_Depan: namaDepan,
-      Nama_Belakang: namaBelakang,
-      Nama_Pengguna: namaPengguna,
-      Kata_Sandi: 12345,
-      Email: email,
-      Jenis_Kelamin: jenisKelamin,
-      Peran: peranAdmin,
-      Tanggal_Pembuatan_Akun: serverTimestamp(),
-    };
-
     try {
-      await setDoc(doc(referensiAdmin), dataAdmin);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        "123456"
+      );
+      const user = userCredential.user;
+
+      const referensiAdmin = collection(database, "admin");
+      const dataAdmin = {
+        Nama_Depan: namaDepan,
+        Nama_Belakang: namaBelakang,
+        Nama_Pengguna: namaPengguna,
+        Email: email,
+        Jenis_Kelamin: jenisKelamin,
+        Peran: peranAdmin,
+        Tanggal_Pembuatan_Akun: serverTimestamp(),
+      };
+
+      await setDoc(doc(referensiAdmin, user.uid), dataAdmin);
       toast.success("Admin berhasil ditambahkan!");
       aturUlangFormulir();
     } catch (error) {

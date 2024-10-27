@@ -11,6 +11,8 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// PENGAIT KAMI
+import useKonversiDataTransaksiKePdf from "@/hooks/backend/useKonversiDataTransaksiKePdf";
 
 const judulTabel = [
   "Pembeli",
@@ -35,6 +37,8 @@ const kontenTabel = [
 ];
 
 function Konten() {
+  const { unduhPdf } = useKonversiDataTransaksiKePdf();
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -159,7 +163,7 @@ function Konten() {
                     </td>
                     <td className={kelas}>
                       <Tooltip content="Unduh Transaksi">
-                        <IconButton variant="text">
+                        <IconButton variant="text" onClick={unduhPdf}>
                           <ArrowDownTrayIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
