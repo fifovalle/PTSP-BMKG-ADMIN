@@ -20,8 +20,10 @@ import Memuat from "@/components/memuat";
 const ModalTambahAdmin = ({ terbuka, tertutup }) => {
   const {
     email,
+    instasi,
     setEmail,
     namaDepan,
+    setInstasi,
     peranAdmin,
     tambahAdmin,
     setNamaDepan,
@@ -32,7 +34,6 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
     setNamaBelakang,
     setNamaPengguna,
     setJenisKelamin,
-    aturUlangFormulir,
     sedangMemuatTambahAdmin,
   } = useTambahAdmin();
 
@@ -113,18 +114,38 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
             </div>
           </div>
 
-          <Typography className="-mb-2" variant="h6">
-            Jenis Kelamin
-          </Typography>
-          <Select
-            label="Pilih Jenis Kelamin"
-            size="lg"
-            value={jenisKelamin}
-            onChange={(value) => setJenisKelamin(value)}
-          >
-            <Option value="Pria">Pria</Option>
-            <Option value="Wanita">Wanita</Option>
-          </Select>
+          <div className="flex flex-row gap-4">
+            <div className="w-full">
+              <Typography className="mb-2" variant="h6">
+                Jenis Kelamin
+              </Typography>
+              <Select
+                label="Pilih Jenis Kelamin"
+                size="lg"
+                value={jenisKelamin}
+                onChange={(value) => setJenisKelamin(value)}
+              >
+                <Option value="Pria">Pria</Option>
+                <Option value="Wanita">Wanita</Option>
+              </Select>
+            </div>
+
+            <div className="w-full">
+              <Typography className="mb-2" variant="h6">
+                Instansi
+              </Typography>
+              <Select
+                label="Pilih Instansi"
+                size="lg"
+                value={instasi}
+                onChange={(value) => setInstasi(value)}
+              >
+                <Option value="Klimatologi">Klimatologi</Option>
+                <Option value="Meteorologi">Meteorologi</Option>
+                <Option value="Geofisika">Geofisika</Option>
+              </Select>
+            </div>
+          </div>
 
           <Typography className="-mb-2" variant="h6">
             Peran Admin

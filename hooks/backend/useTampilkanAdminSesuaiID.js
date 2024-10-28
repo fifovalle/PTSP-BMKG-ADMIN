@@ -1,23 +1,30 @@
 import { useState, useEffect } from "react";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 // PERPUSTAKAAN KAMI
 import { database } from "@/lib/firebaseConfig";
 
-const useTampilkanAdminSesuaiID = (id = localStorage.getItem("ID_Admin")) => {
+const useTampilkanAdminSesuaiID = () => {
+  const pengarah = useRouter();
   const [adminData, setAdminData] = useState(null);
   const [memuatTampilkanAdminSesuaiID, setMemuatTampilkanAdminSesuaiID] =
     useState(true);
-  const router = useRouter(); // Inisialisasi useRouter
+  const [id, setId] = useState(null);
+  const [kataSandi, setKataSandi] = useState(null);
 
   useEffect(() => {
-    const idAdmin = localStorage.getItem("ID_Admin");
-    if (!idAdmin) {
-      router.push("/");
-      return;
+    if (typeof window !== "undefined") {
+      const idAdmin = localStorage.getItem("ID_Admin");
+      if (!idAdmin) {
+        pengarah.push("/");
+        return;
+      }
+      setId(idAdmin);
     }
+  }, [pengarah]);
 
+  useEffect(() => {
     const fetchAdminData = async () => {
       try {
         setMemuatTampilkanAdminSesuaiID(true);
@@ -41,8 +48,10 @@ const useTampilkanAdminSesuaiID = (id = localStorage.getItem("ID_Admin")) => {
       }
     };
 
-    fetchAdminData();
-  }, [id, router]);
+    if (id) {
+      fetchAdminData();
+    }
+  }, [id]);
 
   return { adminData, memuatTampilkanAdminSesuaiID };
 };

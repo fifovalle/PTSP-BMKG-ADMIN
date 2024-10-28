@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Typography,
@@ -28,10 +28,12 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 // PENGAIT KAMI
 import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
 import useKeluarAkun from "@/hooks/backend/useKeluarAkun";
+import useTampilkanBanyakData from "@/hooks/backend/useTampilkanBanyakData";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 
@@ -43,8 +45,18 @@ function Sidebar({ pengarah }) {
   const [lokasiSaatIni, setLokasiSaatIni] = useState("");
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
+  const { jumlahData, sedangMemuat } = useTampilkanBanyakData();
+
+  useEffect(() => {
+    setLokasiSaatIni(window.location.pathname);
+  }, []);
 
   const { keluar, memuat } = useKeluarAkun();
+
+  const totalData = Object.values(jumlahData).reduce(
+    (total, jumlah) => total + jumlah,
+    0
+  );
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
@@ -72,7 +84,7 @@ function Sidebar({ pengarah }) {
           Data
           <ListItemSuffix>
             <Chip
-              value="1"
+              value={totalData.toString()}
               size="sm"
               variant="ghost"
               color="blue-gray"

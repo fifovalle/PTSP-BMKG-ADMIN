@@ -9,34 +9,42 @@ const useMasukDenganEmailKataSandi = () => {
   const [sedangMemuat, setSedangMemuat] = useState(false);
 
   const masukDenganEmail = async (email, password) => {
+    if (!email && !password) {
+      toast.error("Email dan kata sandi tidak boleh kosong.");
+      return;
+    }
+
+    if (!email) {
+      toast.error("Email harus diisi.");
+      return;
+    }
+
+    if (!password) {
+      toast.error("Kata sandi harus diisi.");
+      return;
+    }
+
     setSedangMemuat(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      const kredentialsAdmin = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      if (userCredential.user) {
-        localStorage.setItem("ID_Admin", userCredential.user.uid);
-
+      if (kredentialsAdmin.user) {
+        localStorage.setItem("ID_Admin", kredentialsAdmin.user.uid);
         toast.success("Berhasil masuk!");
         pengarah.push("/beranda");
       }
     } catch (error) {
-      switch (error.code) {
-        case "auth/user-not-found":
-          toast.error("Email tidak ditemukan. Silakan daftar terlebih dahulu.");
-          break;
-        case "auth/wrong-password":
-          toast.error("Kata sandi salah. Coba lagi.");
-          break;
-        case "auth/invalid-email":
-          toast.error("Email tidak valid. Silakan periksa kembali.");
-          break;
-        default:
-          toast.error("Gagal masuk: " + error.message);
+      if (error.code === "auth/invalid-credential") {
+        toast.error(
+          "Email Atau Kata Sandi Salah. Silakan periksa email dan kata sandi Anda."
+        );
+      } else {
+        toast.error("Terjadi kesalahan saat masuk. Silakan coba lagi.");
       }
     } finally {
       setSedangMemuat(false);

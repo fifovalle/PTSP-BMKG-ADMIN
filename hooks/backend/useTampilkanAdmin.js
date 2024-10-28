@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
@@ -11,7 +11,7 @@ const useTampilkanAdmin = (batasHalaman = 5) => {
   const [totalAdmin, setTotalAdmin] = useState(0);
   const [halaman, setHalaman] = useState(1);
 
-  const ambilDaftarAdmin = async () => {
+  const ambilDaftarAdmin = useCallback(async () => {
     const referensiAdmin = collection(database, "admin");
     try {
       setSedangMemuatTampilkanAdmin(true);
@@ -40,11 +40,11 @@ const useTampilkanAdmin = (batasHalaman = 5) => {
     } finally {
       setSedangMemuatTampilkanAdmin(false);
     }
-  };
+  }, [halaman, batasHalaman]);
 
   useEffect(() => {
     ambilDaftarAdmin();
-  }, [halaman]);
+  }, [ambilDaftarAdmin]);
 
   const ambilAdminSebelumnya = () => {
     if (halaman > 1) {

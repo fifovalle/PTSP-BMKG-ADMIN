@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 // KOMPONEN KAMI
 import Sidebar from "@/components/sidebar";
@@ -8,13 +8,14 @@ import Konten from "@/app/dataPengguna/components/konten";
 
 const DataPengguna = () => {
   const pengarah = useRouter();
+  const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
 
   return (
     <section className="p-4 flex h-screen bg-[#eff0f3]">
       <Sidebar pengarah={pengarah} />
       <div className="flex flex-col flex-1 gap-4 mx-3">
-        <Napbar />
-        <Konten />
+        <Napbar tahunDipilih={tahunDipilih} setTahunDipilih={setTahunDipilih} />
+        <Konten tahunDipilih={tahunDipilih} />
       </div>
     </section>
   );

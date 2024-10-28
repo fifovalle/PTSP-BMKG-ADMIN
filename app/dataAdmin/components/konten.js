@@ -8,10 +8,10 @@ import {
   CardBody,
   Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+import Image from "next/image";
 // PENGAIT KAMI
 import useTampilkanAdmin from "@/hooks/backend/useTampilkanAdmin";
 import useHapusAdmin from "@/hooks/backend/useHapusAdmin";
@@ -28,6 +28,7 @@ import { bulan } from "@/constants/bulan";
 const judulTabel = ["Admin", "Fungsi", "Status", "Tanggal Pembuatan Akun", ""];
 
 const Konten = ({ tahunDipilih }) => {
+  const gambarBawaan = require("@/assets/images/profil.jpg");
   const [bukaModalTambahAdmin, setBukaModalTambahAdmin] = useState(false);
   const [bukaModalHapusAdmin, setBukaModalHapusAdmin] = useState(false);
   const [adminYangTerpilih, setAdminYangTerpilih] = useState(null);
@@ -132,6 +133,7 @@ const Konten = ({ tahunDipilih }) => {
                   (
                     {
                       id,
+                      Foto,
                       Nama_Depan,
                       Nama_Belakang,
                       Email,
@@ -150,10 +152,13 @@ const Konten = ({ tahunDipilih }) => {
                       <tr key={id}>
                         <td className={kelas}>
                           <div className="flex items-center gap-3">
-                            <Avatar
-                              src="https://via.placeholder.com/150"
+                            <Image
+                              src={Foto || gambarBawaan}
                               alt={Nama_Depan}
                               size="sm"
+                              width={40}
+                              height={40}
+                              className="rounded-full"
                             />
                             <div className="flex flex-col">
                               <Typography

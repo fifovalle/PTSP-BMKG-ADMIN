@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
@@ -11,7 +11,7 @@ const useTampilkanInformasi = (batasHalaman = 5) => {
   const [totalInformasi, setTotalInformasi] = useState(0);
   const [halaman, setHalaman] = useState(1);
 
-  const ambilDaftarInformasi = async () => {
+  const ambilDaftarInformasi = useCallback(async () => {
     const referensiInformasi = collection(database, "informasi");
     try {
       setSedangMemuatTampilkanInformasi(true);
@@ -45,11 +45,11 @@ const useTampilkanInformasi = (batasHalaman = 5) => {
     } finally {
       setSedangMemuatTampilkanInformasi(false);
     }
-  };
+  }, [halaman, batasHalaman]);
 
   useEffect(() => {
     ambilDaftarInformasi();
-  }, [halaman]);
+  }, [ambilDaftarInformasi]);
 
   const ambilHalamanSebelumnya = () => {
     if (halaman > 1) {
