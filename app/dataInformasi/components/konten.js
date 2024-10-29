@@ -167,7 +167,9 @@ function Konten({ tahunDipilih }) {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {Nama}
+                              {Nama.length > 10
+                                ? Nama.slice(0, 10) + "..."
+                                : Nama}
                             </Typography>
                             <Typography
                               variant="small"
