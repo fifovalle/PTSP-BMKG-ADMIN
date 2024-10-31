@@ -12,6 +12,16 @@ const useTambahJasa = () => {
   const [statusJasa, setStatusJasa] = useState("Tersedia");
   const [sedangMemuatTambahJasa, setSedangMemuatTambahJasa] = useState(false);
 
+  const tentukanNomorRekening = () => {
+    return pemilikJasa === "Meteorologi"
+      ? 1111
+      : pemilikJasa === "Klimatologi"
+      ? 2222
+      : pemilikJasa === "Geofisika"
+      ? 3333
+      : 0;
+  };
+
   const validasiFormulir = () => {
     let sesuai = true;
     let pesanKesalahan = "";
@@ -50,6 +60,7 @@ const useTambahJasa = () => {
       Harga: parseFloat(hargaJasa),
       Pemilik: pemilikJasa,
       Deskripsi: deskripsiJasa,
+      Nomor_Rekening: tentukanNomorRekening(),
       Tanggal_Pembuatan: serverTimestamp(),
       Status: statusJasa,
     };

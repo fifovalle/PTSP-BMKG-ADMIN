@@ -8,6 +8,7 @@ export default function useSuntingInformasi(idInformasi) {
   const [hargaInformasi, setHargaInformasi] = useState("");
   const [pemilikInformasi, setPemilikInformasi] = useState("");
   const [deskripsiInformasi, setDeskripsiInformasi] = useState("");
+  const [noRekening, setNoRekening] = useState("");
   const [sedangMemuatSuntingInformasi, setSedangMemuatSuntingInformasi] =
     useState(false);
 
@@ -19,6 +20,7 @@ export default function useSuntingInformasi(idInformasi) {
         const data = docSnap.data();
         setNamaInformasi(data.Nama);
         setHargaInformasi(data.Harga);
+        setNoRekening(data.Nomor_Rekening);
         setPemilikInformasi(data.Pemilik);
         setDeskripsiInformasi(data.Deskripsi);
       } else {
@@ -67,6 +69,7 @@ export default function useSuntingInformasi(idInformasi) {
   }, [idInformasi]);
 
   return {
+    noRekening,
     namaInformasi,
     hargaInformasi,
     suntingInformasi,

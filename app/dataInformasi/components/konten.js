@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  TrashIcon,
+  UserPlusIcon,
+  EyeIcon,
+} from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -21,6 +26,7 @@ import ModalTambahInformasi from "@/components/modalTambahInformasi";
 import MemuatRangkaTampilkanTabel from "@/components/memuatRangkaTabel";
 import ModalSuntingInformasi from "@/components/modalSuntingInformasi";
 import ModalKonfirmasiHapusInformasi from "@/components/modalKonfirmasiHapusInformasi";
+import ModalLihatInformasi from "@/components/modalLihatInformasi";
 import Memuat from "@/components/memuat";
 // KONSTANTA KAMI
 import { formatRupiah } from "@/constants/formatRupiah";
@@ -40,6 +46,7 @@ function Konten({ tahunDipilih }) {
     useState(false);
   const [bukaModalSuntingInformasi, setBukaModalSuntingInformasi] =
     useState(false);
+  const [bukaModalLihatInformasi, setBukaModalLihatInformasi] = useState(false);
   const [bukaModalHapusInformasi, setBukaModalHapusInformasi] = useState(false);
   const [informasiYangTerpilih, setInformasiYangTerpilih] = useState(null);
   const { hapusInformasi, sedangMemuatHapus } = useHapusInformasi();
@@ -219,6 +226,17 @@ function Konten({ tahunDipilih }) {
                         </Typography>
                       </td>
                       <td className="p-4">
+                        <Tooltip content="Lihat Selengkapnya">
+                          <IconButton
+                            onClick={() => {
+                              setInformasiYangTerpilih(id);
+                              setBukaModalLihatInformasi(true);
+                            }}
+                            variant="text"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip content="Sunting Informasi">
                           <IconButton
                             onClick={() => {
@@ -274,6 +292,12 @@ function Konten({ tahunDipilih }) {
           </Button>
         </div>
       </CardFooter>
+
+      <ModalLihatInformasi
+        terbuka={bukaModalLihatInformasi}
+        tertutup={setBukaModalLihatInformasi}
+        informasiYangTerpilih={informasiYangTerpilih}
+      />
 
       <ModalTambahInformasi
         terbuka={bukaModalTambahInformasi}

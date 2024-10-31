@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -11,20 +12,29 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+// PENGAIT KAMI
+import useTampilkanPengajuan from "@/hooks/backend/useTampilkanPengajuan";
+// KOMPONEN KAMI
+import ModalSuntingPengajuan from "@/components/modalSuntingPengajuan";
+import ModalLihatPengajuan from "@/components/modalLihatPengajuan";
+// KONSTANTA KAMI
+import { formatTanggal } from "@/constants/formatTanggal";
 
 const judulTabel = ["Pembeli", "Status", "Tanggal Pengajuan", ""];
 
-const kontenTabel = [
-  {
-    foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Pengguna",
-    email: "pengguna@gmail.com",
-    status: true,
-    tanggalPengisianPengajuan: "23 Februari 2024",
-  },
-];
-
 function Konten() {
+  const [bukaModalSuntingPengajuan, setBukaModalSuntingPengajuan] =
+    useState(false);
+  const [bukaModalLihatPengajuan, setBukaModalLihatPengajuan] = useState(false);
+  const {
+    halaman,
+    totalPengajuan,
+    daftarPengajuan,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    sedangMemuatPengajuan,
+  } = useTampilkanPengajuan();
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -59,43 +69,37 @@ function Konten() {
           </thead>
 
           <tbody>
-            {kontenTabel.map(
-              (
-                {
-                  foto,
-                  nama,
-                  email,
-                  NIK,
-                  Koresponden,
-                  status,
-                  tanggalPengisianPengajuan,
-                },
-                index
-              ) => {
-                const apakahTerakhir = index === kontenTabel.length - 1;
+            {daftarPengajuan.map(
+              ({ id, foto, ID_Pengguna, status, Tanggal_Pemesanan }, index) => {
+                const apakahTerakhir = index === daftarPengajuan.length - 1;
                 const kelas = apakahTerakhir
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
 
+                const pengguna =
+                  daftarPengajuan.find((p) => p.id === ID_Pengguna) || {};
+                const { Nama_Lengkap = "Tidak ada", Email = "Tidak ada" } =
+                  pengguna;
+
                 return (
-                  <tr key={nama}>
+                  <tr key={id}>
                     <td className={kelas}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={foto} alt={nama} size="sm" />
+                        <Avatar src={foto} alt={Nama_Lengkap} size="sm" />
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {nama}
+                            {Nama_Lengkap}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {email}
+                            {Email}
                           </Typography>
                         </div>
                       </div>
@@ -116,17 +120,23 @@ function Konten() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {tanggalPengisianPengajuan}
+                        {Tanggal_Pemesanan}
                       </Typography>
                     </td>
                     <td className={kelas}>
                       <Tooltip content="Lihat Selengkapnya">
-                        <IconButton variant="text">
+                        <IconButton
+                          onClick={() => setBukaModalLihatPengajuan(true)}
+                          variant="text"
+                        >
                           <EyeIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip content="Sunting Pengajuan">
-                        <IconButton variant="text">
+                        <IconButton
+                          onClick={() => setBukaModalSuntingPengajuan(true)}
+                          variant="text"
+                        >
                           <PencilIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
@@ -146,17 +156,37 @@ function Konten() {
 
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Halaman 1 dari 10
+          Halaman {halaman} dari {Math.ceil(totalPengajuan / 5)}
         </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={ambilHalamanSebelumnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatPengajuan || halaman === 1}
+          >
             Sebelumnya
           </Button>
-          <Button variant="outlined" size="sm">
+          <Button
+            onClick={ambilHalamanSelanjutnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatPengajuan || halaman === 2}
+          >
             Selanjutnya
           </Button>
         </div>
       </CardFooter>
+
+      <ModalSuntingPengajuan
+        terbuka={bukaModalSuntingPengajuan}
+        tertutup={setBukaModalSuntingPengajuan}
+      />
+
+      <ModalLihatPengajuan
+        terbuka={bukaModalLihatPengajuan}
+        tertutup={setBukaModalLihatPengajuan}
+      />
     </Card>
   );
 }

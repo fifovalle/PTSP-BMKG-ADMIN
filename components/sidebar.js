@@ -26,6 +26,7 @@ import {
   BuildingOffice2Icon,
   Cog6ToothIcon,
   PowerIcon,
+  ClockIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import "react-toastify/dist/ReactToastify.css";
@@ -45,13 +46,13 @@ function Sidebar({ pengarah }) {
   const [lokasiSaatIni, setLokasiSaatIni] = useState("");
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
-  const { jumlahData, sedangMemuat } = useTampilkanBanyakData();
+  const { jumlahData, sedangMemuatBanyakData } = useTampilkanBanyakData();
 
   useEffect(() => {
     setLokasiSaatIni(window.location.pathname);
   }, []);
 
-  const { keluar, memuat } = useKeluarAkun();
+  const { keluar } = useKeluarAkun();
 
   const totalData = Object.values(jumlahData).reduce(
     (total, jumlah) => total + jumlah,
@@ -80,17 +81,23 @@ function Sidebar({ pengarah }) {
           Beranda
         </ListItem>
 
-        <ListItem className="cursor-default hover:bg-transparent hover:text-inherit pointer-events-none">
+        <ListItem className="flex justify-between items-center cursor-default hover:bg-transparent hover:text-inherit pointer-events-none">
           Data
-          <ListItemSuffix>
-            <Chip
-              value={totalData.toString()}
-              size="sm"
-              variant="ghost"
-              color="blue-gray"
-              className="rounded-full"
-            />
-          </ListItemSuffix>
+          {sedangMemuatBanyakData ? (
+            <div className="rounded-full w-8 h-8 bg-[#DFE5E7] flex items-center justify-center">
+              <Memuat />
+            </div>
+          ) : (
+            <ListItemSuffix>
+              <Chip
+                value={totalData.toString()}
+                size="sm"
+                variant="ghost"
+                color="blue-gray"
+                className="rounded-full"
+              />
+            </ListItemSuffix>
+          )}
         </ListItem>
 
         <Accordion
@@ -238,42 +245,87 @@ function Sidebar({ pengarah }) {
           </AccordionBody>
         </Accordion>
 
-        <ListItem
-          onClick={() => pengarah.push("/dataIKM")}
-          className={
-            lokasiSaatIni === "/dataIKM" ? "bg-[#0F67B1] text-white" : ""
+        <Accordion
+          open={
+            bukaDropdown === 3 ||
+            lokasiSaatIni === "/dataIKM" ||
+            lokasiSaatIni === "/dataPengajuan" ||
+            lokasiSaatIni === "/dataTransaksi"
+          }
+          icon={
+            <ChevronDownIcon
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${
+                bukaDropdown === 3 ||
+                lokasiSaatIni === "/dataIKM" ||
+                lokasiSaatIni === "/dataPengajuan" ||
+                lokasiSaatIni === "/dataTransaksi"
+                  ? "rotate-180"
+                  : ""
+              }`}
+            />
           }
         >
-          <ListItemPrefix>
-            <ChartBarSquareIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          IKM
-        </ListItem>
+          <ListItem className="p-0" selected={bukaDropdown === 3}>
+            <AccordionHeader
+              onClick={() => setBukaDropdown(bukaDropdown === 3 ? 0 : 3)}
+              className="p-3 border-none"
+            >
+              <ListItemPrefix>
+                <ClockIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="mr-auto font-normal">
+                Aktivitas
+              </Typography>
+            </AccordionHeader>
+          </ListItem>
 
-        <ListItem
-          onClick={() => pengarah.push("/dataPengajuan")}
-          className={
-            lokasiSaatIni === "/dataPengajuan" ? "bg-[#0F67B1] text-white" : ""
-          }
-        >
-          <ListItemPrefix>
-            <DocumentTextIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Pengajuan
-        </ListItem>
+          <AccordionBody className="py-1">
+            <List className="p-0">
+              <ListItem
+                onClick={() => pengarah.push("/dataIKM")}
+                className={
+                  lokasiSaatIni === "/dataIKM" ? "bg-[#0F67B1] text-white" : ""
+                }
+              >
+                <ListItemPrefix>
+                  <ChartBarSquareIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                IKM
+              </ListItem>
 
-        <ListItem
-          onClick={() => pengarah.push("/dataTransaksi")}
-          className={
-            lokasiSaatIni === "/dataTransaksi" ? "bg-[#0F67B1] text-white" : ""
-          }
-        >
-          <ListItemPrefix>
-            <CreditCardIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Transaksi
-        </ListItem>
-        <hr className="border border-gray-400 w-64 self-center mt-1" />
+              <ListItem
+                onClick={() => pengarah.push("/dataPengajuan")}
+                className={
+                  lokasiSaatIni === "/dataPengajuan"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
+              >
+                <ListItemPrefix>
+                  <DocumentTextIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Pengajuan
+              </ListItem>
+
+              <ListItem
+                onClick={() => pengarah.push("/dataTransaksi")}
+                className={
+                  lokasiSaatIni === "/dataTransaksi"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
+              >
+                <ListItemPrefix>
+                  <CreditCardIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Transaksi
+              </ListItem>
+
+              <hr className="border border-gray-400 w-64 self-center" />
+            </List>
+          </AccordionBody>
+        </Accordion>
 
         <Accordion
           open={

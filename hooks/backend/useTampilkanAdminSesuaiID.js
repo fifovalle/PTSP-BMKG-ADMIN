@@ -11,11 +11,11 @@ const useTampilkanAdminSesuaiID = () => {
   const [memuatTampilkanAdminSesuaiID, setMemuatTampilkanAdminSesuaiID] =
     useState(true);
   const [id, setId] = useState(null);
-  const [kataSandi, setKataSandi] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const idAdmin = localStorage.getItem("ID_Admin");
+      console.log("ID_Admin from localStorage:", idAdmin);
       if (!idAdmin) {
         pengarah.push("/");
         return;
@@ -28,6 +28,7 @@ const useTampilkanAdminSesuaiID = () => {
     const fetchAdminData = async () => {
       try {
         setMemuatTampilkanAdminSesuaiID(true);
+        console.log("Fetching admin data for ID:", id);
 
         if (!id) {
           throw new Error("ID Admin tidak ditemukan.");
@@ -42,6 +43,7 @@ const useTampilkanAdminSesuaiID = () => {
           throw new Error("Admin tidak ditemukan.");
         }
       } catch (err) {
+        console.error("Error fetching admin data:", err.message);
         toast.error(err.message);
       } finally {
         setMemuatTampilkanAdminSesuaiID(false);

@@ -14,7 +14,7 @@ const useTampilkanBanyakData = () => {
     pengajuan: 0,
     transaksi: 0,
   });
-  const [sedangMemuat, setSedangMemuat] = useState(true);
+  const [sedangMemuatBanyakData, setSedangMemuatBanyakData] = useState(true);
 
   useEffect(() => {
     const ambilJumlahData = async () => {
@@ -52,14 +52,14 @@ const useTampilkanBanyakData = () => {
       } catch (error) {
         console.error("Error fetching data counts:", error);
       } finally {
-        setSedangMemuat(false);
+        setSedangMemuatBanyakData(false);
       }
     };
 
     ambilJumlahData();
   }, []);
 
-  return { jumlahData, sedangMemuat };
+  return { jumlahData, sedangMemuatBanyakData };
 };
 
 export default useTampilkanBanyakData;

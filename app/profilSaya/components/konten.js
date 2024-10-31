@@ -6,7 +6,6 @@ import InfoProfil from "@/components/infoProfil";
 import SuntingProfil from "@/components/suntingProfil";
 // PENGAIT KAMI
 import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
-import useSuntingProfilAdmin from "@/hooks/backend/useSuntingProfilAdmin";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 
@@ -16,6 +15,7 @@ function Konten() {
   const [tampilkanSunting, setTampilkanSunting] = useState(false);
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
+  const idAdmin = localStorage.getItem("ID_Admin");
 
   const tanganiTampilkanInfo = () => {
     setTampilkanInfo(true);
@@ -82,7 +82,7 @@ function Konten() {
             </Typography>
           </div>
           {tampilkanInfo && <InfoProfil adminData={adminData} />}
-          {tampilkanSunting && <SuntingProfil adminData={adminData} />}
+          {tampilkanSunting && <SuntingProfil adminData={idAdmin} />}
         </>
       )}
     </Card>

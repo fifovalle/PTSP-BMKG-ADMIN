@@ -13,6 +13,16 @@ const useTambahInformasi = () => {
   const [sedangMemuatTambahInformasi, setSedangMemuatTambahInformasi] =
     useState(false);
 
+  const tentukanNomorRekening = () => {
+    return pemilikInformasi === "Meteorologi"
+      ? 1111
+      : pemilikInformasi === "Klimatologi"
+      ? 2222
+      : pemilikInformasi === "Geofisika"
+      ? 3333
+      : 0;
+  };
+
   const validasiFormulir = () => {
     let sesuai = true;
     let pesanKesalahan = "";
@@ -54,6 +64,7 @@ const useTambahInformasi = () => {
       Pemilik: pemilikInformasi,
       Deskripsi: deskripsiInformasi,
       Tanggal_Pembuatan: serverTimestamp(),
+      Nomor_Rekening: tentukanNomorRekening(),
       Status: statusInformasi,
     };
 

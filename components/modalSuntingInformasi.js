@@ -58,7 +58,7 @@ const ModalSuntingInformasi = ({
         </IconButton>
       </div>
 
-      <DialogHeader className="text-black">Sunting Informasi Baru</DialogHeader>
+      <DialogHeader className="text-black">Sunting Informasi</DialogHeader>
       <DialogBody divider>
         <form className="flex flex-col gap-4">
           <Typography className="-mb-2" variant="h6">

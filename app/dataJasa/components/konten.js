@@ -16,6 +16,7 @@ import {
 import ModalTambahJasa from "@/components/modalTambahJasa";
 import ModalSuntingJasa from "@/components/modalSuntingJasa";
 import ModalKonfirmasiHapusJasa from "@/components/modalKonfirmasiHapusJasa";
+import MemuatRangkaTampilkanTabel from "@/components/memuatRangkaTabel";
 // PENGAIT KAMI
 import useTampilkanJasa from "@/hooks/backend/useTampilkanJasa";
 import useHapusJasa from "@/hooks/backend/useHapusJasa";
@@ -108,9 +109,7 @@ function Konten({ tahunDipilih }) {
 
       <CardBody className="overflow-hidden px-0">
         {sedangMemuatTampilkanJasa ? (
-          <Typography variant="small" color="blue-gray">
-            Memuat data...
-          </Typography>
+          <MemuatRangkaTampilkanTabel />
         ) : (
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>

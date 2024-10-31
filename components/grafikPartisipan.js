@@ -7,15 +7,19 @@ import {
 } from "@material-tailwind/react";
 import Chart from "react-apexcharts";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
+//PENGAIT KAMI
+import useTampilkanGrafikPartisipan from "@/hooks/backend/useTampilkanGrafikPartisipan";
 
 const GrafikPartisipan = () => {
+  const { dataPartisipan, sedangMemuatGrafik } = useTampilkanGrafikPartisipan();
+
   const konfigurasi = {
     type: "line",
     height: 240,
     series: [
       {
         name: "Partisipan",
-        data: [50, 40, 300, 320, 30, 350, 200, 230, 200],
+        data: dataPartisipan,
       },
     ],
     options: {
@@ -53,17 +57,7 @@ const GrafikPartisipan = () => {
             fontWeight: 400,
           },
         },
-        categories: [
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+        categories: ["Admin", "Perorangan", "Perusahaan"],
       },
       yaxis: {
         labels: {
