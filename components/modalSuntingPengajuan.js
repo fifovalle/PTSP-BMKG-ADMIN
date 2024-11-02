@@ -11,12 +11,23 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+// PENGAIT KAMI
+import useSuntingPengajuan from "@/hooks/backend/useSuntingPengajuan";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
 
 const ModalSuntingPengajuan = ({
   terbuka,
   tertutup,
   pengajuanYangTerpilih,
 }) => {
+  const {
+    statusPengajuan,
+    setStatusPengajuan,
+    suntingPengajuan,
+    sedangMemuatSuntingPengajuan,
+  } = useSuntingPengajuan(pengajuanYangTerpilih);
+
   return (
     <Dialog
       open={terbuka}
@@ -40,20 +51,40 @@ const ModalSuntingPengajuan = ({
       </div>
 
       <DialogHeader className="text-black">Sunting Pengajuan</DialogHeader>
+
       <DialogBody divider>
         <form className="flex flex-col gap-4">
           <Typography className="-mb-2" variant="h6">
             Status
           </Typography>
-          <Select label="Pilih Status Pengajuan" size="lg">
+          <Select
+            label="Pilih Status Pengajuan"
+            size="lg"
+            value={statusPengajuan}
+            onChange={(value) => setStatusPengajuan(value)}
+          >
+            <Option value="Sedang Ditinjau">Sedang Ditinjau</Option>
             <Option value="Diterima">Diterima</Option>
             <Option value="Ditolak">Ditolak</Option>
           </Select>
         </form>
       </DialogBody>
       <DialogFooter>
-        <Button variant="gradient" color="black">
-          Sunting Pengajuan
+        <Button
+          onClick={async () => {
+            await suntingPengajuan();
+            tertutup(false);
+          }}
+          variant="gradient"
+          color="black"
+          disabled={sedangMemuatSuntingPengajuan}
+          className={`${
+            sedangMemuatSuntingPengajuan
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
+        >
+          {sedangMemuatSuntingPengajuan ? <Memuat /> : "Sunting Jasa"}
         </Button>
       </DialogFooter>
     </Dialog>

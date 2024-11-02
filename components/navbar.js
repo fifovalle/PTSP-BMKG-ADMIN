@@ -12,9 +12,9 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 // KOMPONEN KAMI
-import ModalTambahJasa from "@/components/modalTambahJasa";
 import ModalTambahAdmin from "@/components/modalTambahAdmin";
 import ModalTambahInformasi from "@/components/modalTambahInformasi";
+import ModalTambahJasa from "@/components/modalTambahJasa";
 import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 
 function Napbar({ tahunDipilih, setTahunDipilih }) {

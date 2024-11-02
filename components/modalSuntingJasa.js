@@ -15,6 +15,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
+import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
 // PENGAIT KAMI
 import useSuntingJasa from "@/hooks/backend/useSuntingJasa";
 
@@ -31,6 +32,9 @@ const ModalSuntingJasa = ({ terbuka, tertutup, jasaYangTerpilih }) => {
     setDeskripsiJasa,
     sedangMemuatSuntingJasa,
   } = useSuntingJasa(jasaYangTerpilih);
+
+  const { adminData, memuatTampilkanAdminSesuaiID } =
+    useTampilkanAdminSesuaiID();
 
   return (
     <Dialog
@@ -87,9 +91,23 @@ const ModalSuntingJasa = ({ terbuka, tertutup, jasaYangTerpilih }) => {
             value={pemilikJasa}
             onChange={(value) => setPemilikJasa(value)}
           >
-            <Option value="Meteorologi">Meteorologi</Option>
-            <Option value="Klimatologi">Klimatologi</Option>
-            <Option value="Geofisika">Geofisika</Option>
+            {memuatTampilkanAdminSesuaiID ? (
+              <Option>Memuat...</Option>
+            ) : adminData?.Peran === "Super Admin" ? (
+              [
+                <Option key="1" value="Meteorologi">
+                  Meteorologi
+                </Option>,
+                <Option key="2" value="Klimatologi">
+                  Klimatologi
+                </Option>,
+                <Option key="3" value="Geofisika">
+                  Geofisika
+                </Option>,
+              ]
+            ) : adminData?.Instansi ? (
+              <Option value={adminData.Instansi}>{adminData.Instansi}</Option>
+            ) : null}
           </Select>
 
           <Typography className="-mb-2" variant="h6">

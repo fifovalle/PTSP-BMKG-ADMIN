@@ -14,6 +14,8 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // PENGAIT KAMI
 import useTambahAdmin from "@/hooks/backend/useTambahAdmin";
+import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
+
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 
@@ -36,6 +38,9 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
     setJenisKelamin,
     sedangMemuatTambahAdmin,
   } = useTambahAdmin();
+
+  const { adminData, memuatTampilkanAdminSesuaiID } =
+    useTampilkanAdminSesuaiID();
 
   return (
     <Dialog
@@ -140,9 +145,25 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
                 value={instasi}
                 onChange={(value) => setInstasi(value)}
               >
-                <Option value="Klimatologi">Klimatologi</Option>
-                <Option value="Meteorologi">Meteorologi</Option>
-                <Option value="Geofisika">Geofisika</Option>
+                {memuatTampilkanAdminSesuaiID ? (
+                  <Option>Memuat...</Option>
+                ) : adminData?.Peran === "Super Admin" ? (
+                  [
+                    <Option key="1" value="Meteorologi">
+                      Meteorologi
+                    </Option>,
+                    <Option key="2" value="Klimatologi">
+                      Klimatologi
+                    </Option>,
+                    <Option key="3" value="Geofisika">
+                      Geofisika
+                    </Option>,
+                  ]
+                ) : adminData?.Instansi ? (
+                  <Option value={adminData.Instansi}>
+                    {adminData.Instansi}
+                  </Option>
+                ) : null}
               </Select>
             </div>
           </div>
@@ -156,8 +177,20 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
             value={peranAdmin}
             onChange={(value) => setPeranAdmin(value)}
           >
-            <Option value="Super Admin">Super Admin</Option>
-            <Option value="Admin">Admin</Option>
+            {memuatTampilkanAdminSesuaiID ? (
+              <Option>Memuat...</Option>
+            ) : adminData?.Peran === "Super Admin" ? (
+              [
+                <Option key="Super Admin" value="Super Admin">
+                  Super Admin
+                </Option>,
+                <Option key="Admin" value="Admin">
+                  Admin
+                </Option>,
+              ]
+            ) : adminData?.Peran ? (
+              <Option value={adminData.Peran}>{adminData.Peran}</Option>
+            ) : null}
           </Select>
         </form>
       </DialogBody>

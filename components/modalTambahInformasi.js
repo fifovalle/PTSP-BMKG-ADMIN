@@ -15,6 +15,8 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // PENGAIT KAMI
 import useTambahInformasi from "@/hooks/backend/useTambahInformasi";
+import useTampilkanAdminSesuaiID from "@/hooks/backend/useTampilkanAdminSesuaiID";
+
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 
@@ -32,6 +34,8 @@ const ModalTambahInformasi = ({ terbuka, tertutup }) => {
     sedangMemuatTambahInformasi,
   } = useTambahInformasi();
 
+  const { adminData, memuatTampilkanAdminSesuaiID } =
+    useTampilkanAdminSesuaiID();
   return (
     <Dialog
       open={terbuka}
@@ -89,9 +93,23 @@ const ModalTambahInformasi = ({ terbuka, tertutup }) => {
             value={pemilikInformasi}
             onChange={(value) => setPemilikInformasi(value)}
           >
-            <Option value="Meteorologi">Meteorologi</Option>
-            <Option value="Klimatologi">Klimatologi</Option>
-            <Option value="Geofisika">Geofisika</Option>
+            {memuatTampilkanAdminSesuaiID ? (
+              <Option>Memuat...</Option>
+            ) : adminData?.Peran === "Super Admin" ? (
+              [
+                <Option key="1" value="Meteorologi">
+                  Meteorologi
+                </Option>,
+                <Option key="2" value="Klimatologi">
+                  Klimatologi
+                </Option>,
+                <Option key="3" value="Geofisika">
+                  Geofisika
+                </Option>,
+              ]
+            ) : adminData?.Instansi ? (
+              <Option value={adminData.Instansi}>{adminData.Instansi}</Option>
+            ) : null}
           </Select>
 
           <Typography className="-mb-2" variant="h6">

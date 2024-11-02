@@ -391,7 +391,7 @@ function Sidebar({ pengarah }) {
         </Accordion>
       </List>
 
-      <div className="relative mt-20 mx-auto cursor-pointer">
+      <div className="relative mt-20 mx-auto">
         {memuatTampilkanAdminSesuaiID ? (
           <Memuat />
         ) : (
