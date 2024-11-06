@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import {
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -17,6 +22,7 @@ import ModalTambahJasa from "@/components/modalTambahJasa";
 import ModalSuntingJasa from "@/components/modalSuntingJasa";
 import ModalKonfirmasiHapusJasa from "@/components/modalKonfirmasiHapusJasa";
 import MemuatRangkaTampilkanTabel from "@/components/memuatRangkaTabel";
+import ModalLihatJasa from "@/components/modalLihatJasa";
 // PENGAIT KAMI
 import useTampilkanJasa from "@/hooks/backend/useTampilkanJasa";
 import useHapusJasa from "@/hooks/backend/useHapusJasa";
@@ -37,6 +43,7 @@ const judulTabel = [
 function Konten({ tahunDipilih }) {
   const [bukaModalTambahJasa, setBukaModalTambahJasa] = useState(false);
   const [bukaModalSuntingJasa, setBukaModalSuntingJasa] = useState(false);
+  const [bukaModalLihatJasa, setBukaModalLihatJasa] = useState(false);
   const [bukaModalHapusJasa, setBukaModalHapusJasa] = useState(false);
   const [jasaYangTerpilih, setJasaYangTerpilih] = useState(null);
   const { hapusJasa, sedangMemuatHapusJasa } = useHapusJasa();
@@ -137,10 +144,10 @@ function Konten({ tahunDipilih }) {
                   {
                     id,
                     Nama,
-                    Deskripsi,
                     Harga,
-                    Pemilik,
                     Status,
+                    Pemilik,
+                    Deskripsi,
                     Tanggal_Pembuatan,
                   },
                   index
@@ -223,11 +230,22 @@ function Konten({ tahunDipilih }) {
                         </Typography>
                       </td>
                       <td className={kelas}>
+                        <Tooltip content="Lihat Selengkapnya">
+                          <IconButton
+                            onClick={() => {
+                              setJasaYangTerpilih(id);
+                              setBukaModalLihatJasa(true);
+                            }}
+                            variant="text"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip content="Sunting Jasa">
                           <IconButton
                             onClick={() => {
                               setJasaYangTerpilih(id);
-                              setBukaModalSuntingJasa(true);
+                              setBukaModalLihatJasa(true);
                             }}
                             variant="text"
                           >
@@ -293,6 +311,12 @@ function Konten({ tahunDipilih }) {
         jasaYangTerpilih={jasaYangTerpilih}
         konfirmasiHapusJasa={hapus}
         sedangMemuatHapusJasa={sedangMemuatHapusJasa}
+      />
+
+      <ModalLihatJasa
+        terbuka={bukaModalLihatJasa}
+        tertutup={setBukaModalLihatJasa}
+        jasaYangTerpilih={jasaYangTerpilih}
       />
     </Card>
   );

@@ -8,6 +8,7 @@ export default function useSuntingJasa(idJasa) {
   const [hargaJasa, setHargaJasa] = useState("");
   const [pemilikJasa, setPemilikJasa] = useState("");
   const [deskripsiJasa, setDeskripsiJasa] = useState("");
+  const [noRekening, setNoRekening] = useState("");
   const [sedangMemuatSuntingJasa, setSedangMemuatSuntingJasa] = useState(false);
 
   const ambilDataJasa = async () => {
@@ -19,6 +20,7 @@ export default function useSuntingJasa(idJasa) {
         setNamaJasa(data.Nama);
         setHargaJasa(data.Harga);
         setPemilikJasa(data.Pemilik);
+        setNoRekening(data.Nomor_Rekening);
         setDeskripsiJasa(data.Deskripsi);
       } else {
         toast.error("Data jasa tidak ditemukan!");
@@ -69,6 +71,7 @@ export default function useSuntingJasa(idJasa) {
   return {
     namaJasa,
     hargaJasa,
+    noRekening,
     pemilikJasa,
     setNamaJasa,
     suntingJasa,

@@ -146,9 +146,9 @@ function Konten({ tahunDipilih }) {
                       id,
                       Nama,
                       Harga,
+                      Status,
                       Pemilik,
                       Deskripsi,
-                      Status,
                       Tanggal_Pembuatan,
                     },
                     indeks
