@@ -7,12 +7,17 @@ import {
   CardBody,
   Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+import Image from "next/image";
 // PENGAIT KAMI
 import useKonversiDataTransaksiKePdf from "@/hooks/backend/useKonversiDataTransaksiKePdf";
+import useTampilkanTransaksi from "@/hooks/backend/useTampilkanTransaksi";
+import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
+// KONSTANTA KAMI
+import { formatTanggal } from "@/constants/formatTanggal";
+import { formatRupiah } from "@/constants/formatRupiah";
 
 const judulTabel = [
   "Pembeli",
@@ -23,21 +28,42 @@ const judulTabel = [
   "",
 ];
 
-const kontenTabel = [
-  {
-    foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Pengguna",
-    email: "pengguna@gmail.com",
-    produk: "INFORMASI METEOROLOGI...",
-    kuantitas: "2",
-    total: "Rp 20.000",
-    status: true,
-    tanggalTransasi: "23 Februari 2024",
-  },
-];
-
-function Konten() {
+function Konten({ tahunDipilih }) {
+  const gambarBawaan = require("@/assets/images/profil.jpg");
   const { unduhPdf } = useKonversiDataTransaksiKePdf();
+  const dataBulanTahun = useTampilkanDataPerTahun();
+  const {
+    halaman,
+    totalTransaksi,
+    daftarTransaksi,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    sedangMemuatTransaksi,
+  } = useTampilkanTransaksi();
+
+  const saringTransaksi = daftarTransaksi.filter((item) => {
+    const tanggal =
+      item.Tanggal_Pembuatan_Akun ||
+      item.Tanggal_Pembuatan ||
+      item.Tanggal_Pemesanan;
+    if (!tanggal) return false;
+    const dateObj =
+      tanggal instanceof Date ? tanggal : new Date(tanggal.seconds * 1000);
+    const tahun = dateObj.getFullYear();
+    const bulanIndex = dateObj.getMonth();
+    if (tahunDipilih === "Pilih Tahun") {
+      return true;
+    }
+    if (!dataBulanTahun || dataBulanTahun.length === 0) {
+      return false;
+    }
+    if (bulanIndex < 0 || bulanIndex >= 12) {
+      return false;
+    }
+    const bulanNama = bulan[bulanIndex];
+    const bulanTahunDipilih = `${bulanNama} ${tahun}`;
+    return bulanTahunDipilih === tahunDipilih;
+  });
 
   return (
     <Card className="h-full w-full">
@@ -73,123 +99,174 @@ function Konten() {
           </thead>
 
           <tbody>
-            {kontenTabel.map(
-              (
-                {
-                  foto,
-                  nama,
-                  email,
-                  produk,
-                  kuantitas,
-                  total,
-                  status,
-                  tanggalTransasi,
-                },
-                index
-              ) => {
-                const apakahTerakhir = index === kontenTabel.length - 1;
-                const kelas = apakahTerakhir
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+            {saringTransaksi
+              .filter(
+                (pemesanan) =>
+                  pemesanan.Status_Pembayaran === "Lunas" &&
+                  pemesanan.Status_Pembuatan === "Selesai"
+              )
+              .map(
+                (
+                  { id, pengguna, Tanggal_Pemesanan, Data_Keranjang, ajukan },
+                  index
+                ) => {
+                  const apakahTerakhir = index === daftarTransaksi.length - 1;
+                  const kelas = apakahTerakhir
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={nama}>
-                    <td className={kelas}>
-                      <div className="flex items-center gap-3">
-                        <Avatar src={foto} alt={nama} size="sm" />
-                        <div className="flex flex-col">
+                  return (
+                    <tr key={id}>
+                      <td className={kelas}>
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={pengguna.Foto || gambarBawaan}
+                            alt={pengguna.Nama_Lengkap}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {pengguna.Nama_Lengkap}
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {pengguna.Email}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={kelas}>
+                        {Data_Keranjang && Data_Keranjang.length > 0 ? (
+                          Data_Keranjang.map((dataKeranjang, idx) => (
+                            <div key={idx} className="flex flex-col mb-2">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {dataKeranjang.Jenis_Produk}
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {nama}
+                            Tidak ada produk
                           </Typography>
+                        )}
+                      </td>
+                      <td className={kelas}>
+                        {Data_Keranjang && Data_Keranjang.length > 0 ? (
+                          Data_Keranjang.map((dataKeranjang, idx) => (
+                            <div key={idx} className="flex flex-col mb-2">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal opacity-70"
+                              >
+                                {dataKeranjang.Kuantitas} Barang
+                              </Typography>
+
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {formatRupiah(dataKeranjang.Harga)}
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal opacity-70"
+                            className="font-normal"
                           >
-                            {email}
+                            Tidak ada produk
                           </Typography>
+                        )}
+                      </td>
+
+                      <td className={kelas}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={ajukan.Status_Ajuan || "Belum ada status"}
+                            color={
+                              ajukan.Status_Ajuan === "Diterima"
+                                ? "green"
+                                : ajukan.Status_Ajuan === "Ditolak"
+                                ? "red"
+                                : ajukan.Status_Ajuan === "Sedang Ditinjau"
+                                ? "yellow"
+                                : "default"
+                            }
+                          />
                         </div>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {produk}
-                      </Typography>
-                    </td>
-                    <td className={kelas}>
-                      <div className="flex flex-col">
+                      </td>
+                      <td className={kelas}>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {kuantitas}
+                          {formatTanggal(Tanggal_Pemesanan)}
                         </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {total}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={status ? "Diterima" : "Ditolak"}
-                          color={status ? "green" : "blue-gray"}
-                        />
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {tanggalTransasi}
-                      </Typography>
-                    </td>
-                    <td className={kelas}>
-                      <Tooltip content="Unduh Transaksi">
-                        <IconButton variant="text" onClick={unduhPdf}>
-                          <ArrowDownTrayIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Hapus Transaksi">
-                        <IconButton variant="text">
-                          <TrashIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+                      </td>
+                      <td className={kelas}>
+                        <Tooltip content="Unduh Transaksi">
+                          <IconButton variant="text" onClick={unduhPdf}>
+                            <ArrowDownTrayIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip content="Hapus Transaksi">
+                          <IconButton variant="text">
+                            <TrashIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
           </tbody>
         </table>
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Halaman 1 dari 10
+          Halaman {halaman} dari {Math.ceil(totalTransaksi / 5)}
         </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={ambilHalamanSebelumnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatTransaksi || halaman === 1}
+          >
             Sebelumnya
           </Button>
-          <Button variant="outlined" size="sm">
+          <Button
+            onClick={ambilHalamanSelanjutnya}
+            variant="outlined"
+            size="sm"
+            disabled={
+              sedangMemuatTransaksi || halaman === Math.ceil(totalTransaksi / 5)
+            }
+          >
             Selanjutnya
           </Button>
         </div>

@@ -27,6 +27,7 @@ import {
   Cog6ToothIcon,
   PowerIcon,
   ClockIcon,
+  DocumentPlusIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import "react-toastify/dist/ReactToastify.css";
@@ -250,6 +251,7 @@ function Sidebar({ pengarah }) {
             bukaDropdown === 3 ||
             lokasiSaatIni === "/dataIKM" ||
             lokasiSaatIni === "/dataPengajuan" ||
+            lokasiSaatIni === "/dataPembuatan" ||
             lokasiSaatIni === "/dataTransaksi"
           }
           icon={
@@ -259,6 +261,7 @@ function Sidebar({ pengarah }) {
                 bukaDropdown === 3 ||
                 lokasiSaatIni === "/dataIKM" ||
                 lokasiSaatIni === "/dataPengajuan" ||
+                lokasiSaatIni === "/dataPembuatan" ||
                 lokasiSaatIni === "/dataTransaksi"
                   ? "rotate-180"
                   : ""
@@ -309,6 +312,20 @@ function Sidebar({ pengarah }) {
               </ListItem>
 
               <ListItem
+                onClick={() => pengarah.push("/dataPembuatan")}
+                className={
+                  lokasiSaatIni === "/dataPembuatan"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
+              >
+                <ListItemPrefix>
+                  <DocumentPlusIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Pembuatan
+              </ListItem>
+
+              <ListItem
                 onClick={() => pengarah.push("/dataTransaksi")}
                 className={
                   lokasiSaatIni === "/dataTransaksi"
@@ -319,7 +336,7 @@ function Sidebar({ pengarah }) {
                 <ListItemPrefix>
                   <CreditCardIcon className="h-5 w-5" />
                 </ListItemPrefix>
-                Transaksi
+                Riwayat Transaksi
               </ListItem>
 
               <hr className="border border-gray-400 w-64 self-center" />

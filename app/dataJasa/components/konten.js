@@ -67,9 +67,6 @@ function Konten({ tahunDipilih }) {
       setJasaYangTerpilih(null);
     }
   };
-  const daftarJasaTerurut = daftarJasa.sort((a, b) => {
-    return b.Tanggal_Pembuatan.seconds - a.Tanggal_Pembuatan.seconds;
-  });
 
   const saringJasa = daftarJasa.filter((item) => {
     const tanggal = item.Tanggal_Pembuatan_Akun || item.Tanggal_Pembuatan;

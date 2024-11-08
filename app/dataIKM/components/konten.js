@@ -1,55 +1,74 @@
+import React, { useState } from "react";
 import {
   ArrowDownTrayIcon,
   EyeIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
+import Image from "next/image";
 import {
   Card,
   CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
 // PENGAIT KAMI
 import useKonversiDataIKMKePdf from "@/hooks/backend/useKonversiDataIKMKePdf";
+import useTampilkanIKM from "@/hooks/backend/useTampilkanDataIKM";
+import useHapusIKM from "@/hooks/backend/useHapusDataIKM";
+// KONSTANTA KAMI
+import { formatTanggal } from "@/constants/formatTanggal";
+// KOMPONEN KAMI
+import Memuat from "@/components/memuat";
+import ModalLihatIKM from "@/components/modalLihatIKM";
+import ModalKonfirmasiHapusIKM from "@/components/modalKonfirmasiHapusIKM";
 
 const judulTabel = [
   "Pembeli",
   "NIK & Koresponden",
   "Jenis Layanan",
   "Tanggal Pengisian IKM",
-  "",
-];
-
-const kontenTabel = [
-  {
-    foto: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    nama: "Pengguna",
-    email: "pengguna@gmail.com",
-    NIK: "2250081109",
-    Koresponden: "Masyarakat Umum",
-    jenisLayanan: true,
-    tanggalPengisianIKM: "23 Februari 2024",
-  },
+  "Aksi",
 ];
 
 function Konten() {
+  const gambarBawaan = require("@/assets/images/profil.jpg");
+  const [bukaModalLihatIKM, setBukaModalLihatIKM] = useState(false);
+  const [bukaModalHapusIKM, setBukaModalHapusIKM] = useState(false);
+  const [ikmYangTerpilih, setIkmYangTerpilih] = useState(null);
+  const {
+    daftarIKM,
+    sedangMemuatIKM,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    halaman,
+    totalIKM,
+  } = useTampilkanIKM();
   const { unduhPdf } = useKonversiDataIKMKePdf();
+  const { hapusIKM } = useHapusIKM(); // Pastikan Anda memiliki fungsi ini
+  const [sedangMemuatHapusIKM, setSedangMemuatHapusIKM] = useState(false);
+
+  const konfirmasiHapusIKM = () => {
+    setSedangMemuatHapusIKM(true);
+    hapusIKM(ikmYangTerpilih)
+      .then(() => {
+        setBukaModalHapusIKM(false);
+      })
+      .finally(() => {
+        setSedangMemuatHapusIKM(false);
+      });
+  };
 
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-1 flex items-center justify-between">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              Daftar IKM
-            </Typography>
-          </div>
+          <Typography variant="h5" color="blue-gray">
+            Daftar IKM
+          </Typography>
         </div>
       </CardHeader>
 
@@ -75,106 +94,150 @@ function Konten() {
           </thead>
 
           <tbody>
-            {kontenTabel.map(
-              (
-                {
-                  foto,
-                  nama,
-                  email,
-                  NIK,
-                  Koresponden,
-                  jenisLayanan,
-                  tanggalPengisianIKM,
-                },
-                index
-              ) => {
-                const apakahTerakhir = index === kontenTabel.length - 1;
-                const kelas = apakahTerakhir
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+            {sedangMemuatIKM ? (
+              <tr>
+                <td colSpan="5" className="text-center py-4">
+                  Memuat data...
+                </td>
+              </tr>
+            ) : (
+              daftarIKM.map(
+                (
+                  { id, referensi, Jenis_Produk, Tanggal_Pembuatan_IKM },
+                  index
+                ) => {
+                  const { data } = referensi || {};
+                  const Nama_Lengkap =
+                    data?.Nama_Lengkap || "Nama tidak tersedia";
+                  const Email = data?.Email || "Email tidak tersedia";
+                  const foto = data?.foto || gambarBawaan;
+                  const NIK = data?.No_Identitas || "NIK tidak tersedia";
+                  const apakahTerakhir = index === daftarIKM.length - 1;
+                  const kelas = apakahTerakhir
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={nama}>
-                    <td className={kelas}>
-                      <div className="flex items-center gap-3">
-                        <Avatar src={foto} alt={nama} size="sm" />
+                  const instansi = referensi
+                    ? referensi.type === "perorangan"
+                      ? "Masyarakat Umum"
+                      : "Instansi"
+                    : "Tidak Diketahui";
+
+                  const jenisLayanan = Jenis_Produk || "Tidak diketahui";
+
+                  return (
+                    <tr key={id}>
+                      <td className={kelas}>
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={foto || gambarBawaan}
+                            alt={Nama_Lengkap}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {Nama_Lengkap}
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {Email}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className={kelas}>
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {nama}
+                            {instansi}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal opacity-70"
+                            className="font-normal"
                           >
-                            {email}
+                            {NIK}
                           </Typography>
                         </div>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <div className="flex flex-col">
+                      </td>
+
+                      <td className={kelas}>
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {jenisLayanan}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      <td className={kelas}>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {NIK}
+                          {formatTanggal(Tanggal_Pembuatan_IKM)}
                         </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {Koresponden}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={jenisLayanan ? "Informasi" : "Jasa"}
-                          color={jenisLayanan ? "green" : "blue-gray"}
-                        />
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {tanggalPengisianIKM}
-                      </Typography>
-                    </td>
-                    <td className={kelas}>
-                      <Tooltip content="Unduh IKM">
-                        <IconButton variant="text" onClick={unduhPdf}>
-                          <ArrowDownTrayIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
+                      </td>
 
-                      <Tooltip content="Selengkapnya">
-                        <IconButton variant="text">
-                          <EyeIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
+                      <td className={kelas}>
+                        <Tooltip content="Unduh IKM">
+                          <IconButton
+                            variant="text"
+                            onClick={() => unduhPdf(id)}
+                          >
+                            <ArrowDownTrayIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
 
-                      <Tooltip content="Hapus IKM">
-                        <IconButton variant="text">
-                          <TrashIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              }
+                        <Tooltip content="Selengkapnya">
+                          <IconButton
+                            onClick={() => {
+                              setIkmYangTerpilih(id);
+                              setBukaModalLihatIKM(true);
+                            }}
+                            variant="text"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip content="Hapus IKM">
+                          <IconButton
+                            variant="text"
+                            onClick={() => {
+                              setIkmYangTerpilih(id);
+                              setBukaModalHapusIKM(true);
+                            }}
+                          >
+                            {sedangMemuatHapusIKM ? (
+                              <Memuat />
+                            ) : (
+                              <TrashIcon className="h-4 w-4" />
+                            )}
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                }
+              )
             )}
           </tbody>
         </table>
@@ -182,17 +245,34 @@ function Konten() {
 
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Halaman 1 dari 10
+          Halaman {halaman} dari {Math.ceil(totalIKM / 5)}
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
+          <Button variant="outlined" size="sm" onClick={ambilHalamanSebelumnya}>
             Sebelumnya
           </Button>
-          <Button variant="outlined" size="sm">
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={ambilHalamanSelanjutnya}
+          >
             Selanjutnya
           </Button>
         </div>
       </CardFooter>
+
+      <ModalKonfirmasiHapusIKM
+        terbuka={bukaModalHapusIKM}
+        tutupModal={setBukaModalHapusIKM}
+        ikmYangTerpilih={ikmYangTerpilih}
+        konfirmasiHapusIKM={konfirmasiHapusIKM}
+        sedangMemuatHapusIKM={sedangMemuatHapusIKM}
+      />
+      <ModalLihatIKM
+        terbuka={bukaModalLihatIKM}
+        tutupModal={setBukaModalLihatIKM}
+        idIKM={ikmYangTerpilih}
+      />
     </Card>
   );
 }

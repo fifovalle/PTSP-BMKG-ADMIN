@@ -3,6 +3,44 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
 
+const cekPeroranganAtauPerusahaan = async (id) => {
+  const peroranganRef = doc(database, "perorangan", id);
+  const peroranganDoc = await getDoc(peroranganRef);
+  if (peroranganDoc.exists()) {
+    return { type: "perorangan", data: peroranganDoc.data() };
+  }
+
+  const perusahaanRef = doc(database, "perusahaan", id);
+  const perusahaanDoc = await getDoc(perusahaanRef);
+  if (perusahaanDoc.exists()) {
+    return { type: "perusahaan", data: perusahaanDoc.data() };
+  }
+
+  return null;
+};
+const getJenisProduk = async (ID_Pengguna) => {
+  const pemesananRef = collection(database, "pemesanan");
+  const snapshot = await getDocs(pemesananRef);
+
+  for (const docSnapshot of snapshot.docs) {
+    const pemesananData = docSnapshot.data();
+
+    if (pemesananData.ID_Pengguna === ID_Pengguna) {
+      // Periksa apakah Data_Keranjang ada dan apakah itu sebuah array
+      if (
+        pemesananData.Data_Keranjang &&
+        Array.isArray(pemesananData.Data_Keranjang)
+      ) {
+        // Ambil Jenis_Produk dari item pertama dalam Data_Keranjang
+        const jenisProduk = pemesananData.Data_Keranjang[0]?.Jenis_Produk;
+        return jenisProduk || "Jenis Produk tidak tersedia";
+      }
+    }
+  }
+
+  return "Jenis Produk tidak ditemukan";
+};
+
 const useTampilkanIKM = (batasHalaman = 5) => {
   const [sedangMemuatIKM, setSedangMemuatIKM] = useState(false);
   const [daftarIKM, setDaftarIKM] = useState([]);
@@ -33,39 +71,18 @@ const useTampilkanIKM = (batasHalaman = 5) => {
             ...ikmDoc.data(),
           };
 
-          let referensiData = null;
+          const referensiData = await cekPeroranganAtauPerusahaan(ikmData.id);
+          ikmData.referensi = referensiData;
 
-          if (ikmData.referensiPerorangan) {
-            const peroranganRef = doc(
-              database,
-              "perorangan",
-              ikmData.referensiPerorangan.id
-            );
-            const peroranganDoc = await getDoc(peroranganRef);
-            if (peroranganDoc.exists()) {
-              referensiData = {
-                data: peroranganDoc.data(),
-              };
-            }
-          } else if (ikmData.referensiPerusahaan) {
-            const perusahaanRef = doc(
-              database,
-              "perusahaan",
-              ikmData.referensiPerusahaan.id
-            );
-            const perusahaanDoc = await getDoc(perusahaanRef);
-            if (perusahaanDoc.exists()) {
-              referensiData = {
-                data: perusahaanDoc.data(),
-              };
-            }
+          if (ikmData.id) {
+            const jenisProduk = await getJenisProduk(ikmData.id);
+            ikmData.Jenis_Produk = jenisProduk;
+          } else {
+            ikmData.Jenis_Produk = "ID Pemesanan tidak tersedia";
           }
 
-          ikmData.referensi = referensiData;
           ikmDataList.push(ikmData);
-
-          // Log data IKM untuk memastikan referensi telah berhasil ditambahkan
-          console.log("Data IKM setelah relasi:", ikmData);
+          console.log(ikmDataList);
         }
       }
 

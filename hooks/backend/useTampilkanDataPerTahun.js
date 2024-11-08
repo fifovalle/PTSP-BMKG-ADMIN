@@ -16,6 +16,7 @@ const useTampilkanDataPerTahun = () => {
         "jasa",
         "perorangan",
         "perusahaan",
+        "pemesanan",
       ];
 
       for (const koleksiNama of koleksi) {
@@ -32,6 +33,8 @@ const useTampilkanDataPerTahun = () => {
               : (koleksiNama === "informasi" || koleksiNama === "jasa") &&
                 data.Tanggal_Pembuatan
               ? data.Tanggal_Pembuatan.toDate()
+              : koleksiNama === "pemesanan" && data.Tanggal_Pemesanan
+              ? data.Tanggal_Pemesanan.toDate()
               : null;
 
           if (tanggal) {
@@ -49,7 +52,7 @@ const useTampilkanDataPerTahun = () => {
     fetchData();
   }, []);
 
-  return bulan, dataBulanTahun;
+  return dataBulanTahun;
 };
 
 export default useTampilkanDataPerTahun;
