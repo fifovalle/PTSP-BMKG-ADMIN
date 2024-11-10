@@ -16,7 +16,7 @@ import { formatRupiah } from "@/constants/formatRupiah";
 
 const ModalLihatIKM = ({ terbuka, tertutup, ikmYangTerpilih }) => {
   const { noRekening, namaJasa, hargaJasa, deskripsiJasa, pemilikJasa } =
-    useSuntingJasa(ikmYangTerpilih);
+    useTampilkanIKM(ikmYangTerpilih);
 
   return (
     <Dialog

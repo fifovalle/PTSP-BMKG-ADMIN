@@ -64,11 +64,18 @@ const ModalLihatPengajuan = ({ terbuka, tertutup, pengajuanYangTerpilih }) => {
         {pengajuanTerpilih ? (
           <>
             <div className="flex flex-col items-center mb-4 md:mb-0">
-              <embed
-                alt="Dokumen Pengajuan"
-                className="w-80 h-64 border-4 border-gray-300 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg"
-                src={pengajuanTerpilih.ajukan?.File_Ajukan}
-              />
+              {pengajuanTerpilih.ajukan?.File_Ajukan?.length > 0 ? (
+                pengajuanTerpilih.ajukan.File_Ajukan.map((file, index) => (
+                  <embed
+                    key={index}
+                    alt={`Dokumen Pengajuan ${index + 1}`}
+                    className="w-80 h-64 border-4 border-gray-300 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg mb-2"
+                    src={file}
+                  />
+                ))
+              ) : (
+                <p className="text-gray-500">Dokumen ajukan tidak tersedia</p>
+              )}
               <h3 className="text-center mt-3 font-semibold text-blue-700">
                 {pengajuanTerpilih.ajukan?.Nama_Ajukan ||
                   "Nama ajukan tidak tersedia"}

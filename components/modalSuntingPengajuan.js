@@ -8,6 +8,7 @@ import {
   IconButton,
   Button,
   Select,
+  Input,
   Option,
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -67,6 +68,33 @@ const ModalSuntingPengajuan = ({
             <Option value="Diterima">Diterima</Option>
             <Option value="Ditolak">Ditolak</Option>
           </Select>
+
+          <Typography className="-mb-2" variant="h6">
+            Virtual Akun Meteorologi
+          </Typography>
+          <Input
+            type="number"
+            label="Masukan Virtual Akun Meteorologi"
+            size="lg"
+          />
+
+          <Typography className="-mb-2" variant="h6">
+            Virtual Akun Geofisika
+          </Typography>
+          <Input
+            type="number"
+            label="Masukan Virtual Akun Geofisika"
+            size="lg"
+          />
+
+          <Typography className="-mb-2" variant="h6">
+            Virtual Akun Klimatologi
+          </Typography>
+          <Input
+            type="number"
+            label="Masukan Virtual Akun Klimatologi"
+            size="lg"
+          />
         </form>
       </DialogBody>
       <DialogFooter>
@@ -84,7 +112,7 @@ const ModalSuntingPengajuan = ({
               : "opacity-100"
           }`}
         >
-          {sedangMemuatSuntingPengajuan ? <Memuat /> : "Sunting Jasa"}
+          {sedangMemuatSuntingPengajuan ? <Memuat /> : "Sunting Pengajuan"}
         </Button>
       </DialogFooter>
     </Dialog>

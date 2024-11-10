@@ -74,6 +74,7 @@ const useTambahAdmin = () => {
         Kata_Sandi: "123456",
         Peran: peranAdmin,
         Tanggal_Pembuatan_Akun: serverTimestamp(),
+        createdBy: auth.currentUser.uid,
       };
 
       await setDoc(doc(referensiAdmin, user.uid), dataAdmin);

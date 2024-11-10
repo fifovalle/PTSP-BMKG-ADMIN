@@ -48,7 +48,7 @@ function Konten() {
     totalIKM,
   } = useTampilkanIKM();
   const { unduhPdf } = useKonversiDataIKMKePdf();
-  const { hapusIKM } = useHapusIKM(); // Pastikan Anda memiliki fungsi ini
+  const { hapusIKM } = useHapusIKM();
   const [sedangMemuatHapusIKM, setSedangMemuatHapusIKM] = useState(false);
 
   const konfirmasiHapusIKM = () => {

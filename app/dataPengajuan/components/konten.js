@@ -23,7 +23,7 @@ import ModalLihatPengajuan from "@/components/modalLihatPengajuan";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 
-const judulTabel = ["Pembeli", "Status", "Tanggal Pengajuan", ""];
+const judulTabel = ["Pembeli", "Status", "Jenis", "Tanggal Pengajuan", ""];
 
 function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
@@ -168,6 +168,22 @@ function Konten({ tahunDipilih }) {
                                 ? "red"
                                 : ajukan.Status_Ajuan === "Sedang Ditinjau"
                                 ? "yellow"
+                                : "default"
+                            }
+                          />
+                        </div>
+                      </td>
+                      <td className={kelas}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={ajukan.Jenis_Ajukan || "Belum ada jenis"}
+                            color={
+                              ajukan.Jenis_Ajukan === "Gratis"
+                                ? "green"
+                                : ajukan.Jenis_Ajukan === "Berbayar"
+                                ? "red"
                                 : "default"
                             }
                           />

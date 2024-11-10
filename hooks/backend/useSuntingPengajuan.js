@@ -5,6 +5,7 @@ import { database } from "@/lib/firebaseConfig";
 
 export default function useSuntingPengajuan(idPemesanan) {
   const [statusPengajuan, setStatusPengajuan] = useState("");
+  const [virtualAkun, setVirtualAkun] = useState(0);
   const [sedangMemuatSuntingPengajuan, setSedangMemuatSuntingPengajuan] =
     useState(false);
   const [idAjukan, setIdAjukan] = useState("");

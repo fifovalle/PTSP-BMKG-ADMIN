@@ -219,7 +219,7 @@ const Konten = ({ tahunDipilih }) => {
                           <Tooltip content="Hapus Admin">
                             <IconButton
                               variant="text"
-                              onClick={() => konfirmasiHapus(id)}
+                              onClick={() => konfirmasiHapus(id, Peran)}
                             >
                               {sedangMemuatHapusAdmin ? (
                                 <Memuat />
