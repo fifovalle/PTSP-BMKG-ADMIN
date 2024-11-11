@@ -114,13 +114,13 @@ function Konten({ tahunDipilih }) {
             ).length === 0 ? (
               <tr>
                 <td colSpan="4" className="p-4 text-center text-blue-gray-500">
-                  Tidak ada data pengajuan
+                  Tidak Ada Data
                 </td>
               </tr>
             ) : (
               daftarPengajuan
                 .filter(({ ajukan }) => ajukan.Status_Ajuan !== "Diterima")
-                .map(({ id, pengguna, ajukan }, index) => {
+                .map(({ id, pengguna, Jenis_Ajukan, ajukan }, index) => {
                   const apakahTerakhir = index === daftarPengajuan.length - 1;
                   const kelas = apakahTerakhir
                     ? "p-4"

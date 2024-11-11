@@ -103,11 +103,18 @@ function Konten({ tahunDipilih }) {
               .filter(
                 (pemesanan) =>
                   pemesanan.Status_Pembayaran === "Lunas" &&
-                  pemesanan.Status_Pembuatan === "Selesai"
+                  pemesanan.Status_Pesanan === "Selesai"
               )
               .map(
                 (
-                  { id, pengguna, Tanggal_Pemesanan, Data_Keranjang, ajukan },
+                  {
+                    id,
+                    pengguna,
+                    Tanggal_Pemesanan,
+                    Total_Harga_Pesanan,
+                    Data_Keranjang,
+                    ajukan,
+                  },
                   index
                 ) => {
                   const apakahTerakhir = index === daftarTransaksi.length - 1;
@@ -182,7 +189,11 @@ function Konten({ tahunDipilih }) {
                               <Typography
                                 variant="small"
                                 color="blue-gray"
-                                className="font-normal"
+                                className={`font-normal ${
+                                  Total_Harga_Pesanan === "Gratis"
+                                    ? "line-through"
+                                    : ""
+                                }`}
                               >
                                 {formatRupiah(dataKeranjang.Harga)}
                               </Typography>

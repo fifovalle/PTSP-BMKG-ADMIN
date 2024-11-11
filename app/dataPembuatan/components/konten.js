@@ -92,72 +92,84 @@ function Konten({ tahunDipilih }) {
           </thead>
 
           <tbody>
-            {saringPemesanan
-              .filter(
-                (pemesanan) =>
-                  pemesanan.Status_Pembayaran === "Lunas" &&
-                  pemesanan.Status_Pembuatan !== "Selesai"
-              )
-              .map(({ id, pengguna, Tanggal_Pemesanan }, index) => {
-                const apakahTerakhir = index === daftarPemesanan.length - 1;
-                const kelas = apakahTerakhir
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+            {saringPemesanan.filter(
+              (pemesanan) =>
+                pemesanan.Status_Pembayaran === "Lunas" &&
+                pemesanan.Status_Pesanan !== "Selesai"
+            ).length > 0 ? (
+              saringPemesanan
+                .filter(
+                  (pemesanan) =>
+                    pemesanan.Status_Pembayaran === "Lunas" &&
+                    pemesanan.Status_Pesanan !== "Selesai"
+                )
+                .map(({ id, pengguna, Tanggal_Pemesanan }, index) => {
+                  const apakahTerakhir = index === saringPemesanan.length - 1;
+                  const kelas = apakahTerakhir
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={id}>
-                    <td className={kelas}>
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={pengguna.Foto || gambarBawaan}
-                          alt={pengguna.Nama_Lengkap}
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {pengguna.Nama_Lengkap}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {pengguna.Email}
-                          </Typography>
+                  return (
+                    <tr key={id}>
+                      <td className={kelas}>
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={pengguna.Foto || gambarBawaan}
+                            alt={pengguna.Nama_Lengkap}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {pengguna.Nama_Lengkap}
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {pengguna.Email}
+                            </Typography>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className={kelas}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {formatTanggal(Tanggal_Pemesanan)}
-                      </Typography>
-                    </td>
-                    <td className={kelas}>
-                      <Tooltip content="Sunting">
-                        <IconButton
-                          onClick={() => {
-                            setPembuatanTerpilih(id);
-                            setBukaModalSuntingPengajuan(true);
-                          }}
-                          variant="text"
+                      </td>
+                      <td className={kelas}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
                         >
-                          <AiOutlineUpload className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              })}
+                          {formatTanggal(Tanggal_Pemesanan)}
+                        </Typography>
+                      </td>
+                      <td className={kelas}>
+                        <Tooltip content="Sunting">
+                          <IconButton
+                            onClick={() => {
+                              setPembuatanTerpilih(id);
+                              setBukaModalSuntingPengajuan(true);
+                            }}
+                            variant="text"
+                          >
+                            <AiOutlineUpload className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                })
+            ) : (
+              <tr>
+                <td colSpan="3" className="p-4 text-center text-gray-500">
+                  Tidak Ada Data
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </CardBody>

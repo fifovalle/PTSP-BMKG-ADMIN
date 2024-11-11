@@ -23,11 +23,20 @@ const ModalSuntingPengajuan = ({
   pengajuanYangTerpilih,
 }) => {
   const {
+    dataKeranjang,
+    nomorVAs,
+    setNomorVAs,
+    suntingPengajuan,
     statusPengajuan,
     setStatusPengajuan,
-    suntingPengajuan,
     sedangMemuatSuntingPengajuan,
   } = useSuntingPengajuan(pengajuanYangTerpilih);
+
+  const tanganiPerubahanNomorVA = (indeks, nilai) => {
+    const updatedNomorVAs = [...nomorVAs];
+    updatedNomorVAs[indeks] = nilai;
+    setNomorVAs(updatedNomorVAs);
+  };
 
   return (
     <Dialog
@@ -69,32 +78,26 @@ const ModalSuntingPengajuan = ({
             <Option value="Ditolak">Ditolak</Option>
           </Select>
 
-          <Typography className="-mb-2" variant="h6">
-            Virtual Akun Meteorologi
-          </Typography>
-          <Input
-            type="number"
-            label="Masukan Virtual Akun Meteorologi"
-            size="lg"
-          />
-
-          <Typography className="-mb-2" variant="h6">
-            Virtual Akun Geofisika
-          </Typography>
-          <Input
-            type="number"
-            label="Masukan Virtual Akun Geofisika"
-            size="lg"
-          />
-
-          <Typography className="-mb-2" variant="h6">
-            Virtual Akun Klimatologi
-          </Typography>
-          <Input
-            type="number"
-            label="Masukan Virtual Akun Klimatologi"
-            size="lg"
-          />
+          {dataKeranjang.map((dataKeranjang, indeks) => (
+            <div key={indeks} className="mb-4">
+              <Typography variant="h6">
+                Virtual Akun - {dataKeranjang.Jenis_Produk} (
+                {dataKeranjang.Pemilik || "Tidak Tersedia"})
+              </Typography>
+              <Typography className="mb-2 font-normal text-sm" variant="h6">
+                {dataKeranjang.Nama || "Tidak Tersedia"}
+              </Typography>
+              <Input
+                type="number"
+                label="Masukan Virtual Akun"
+                size="lg"
+                defaultValue={dataKeranjang.Nomor_VA || ""}
+                onChange={(e) =>
+                  tanganiPerubahanNomorVA(indeks, e.target.value)
+                }
+              />
+            </div>
+          ))}
         </form>
       </DialogBody>
       <DialogFooter>

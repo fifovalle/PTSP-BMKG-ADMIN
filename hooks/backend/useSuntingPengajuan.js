@@ -5,7 +5,8 @@ import { database } from "@/lib/firebaseConfig";
 
 export default function useSuntingPengajuan(idPemesanan) {
   const [statusPengajuan, setStatusPengajuan] = useState("");
-  const [virtualAkun, setVirtualAkun] = useState(0);
+  const [dataKeranjang, setDataKeranjang] = useState([]);
+  const [nomorVAs, setNomorVAs] = useState([]);
   const [sedangMemuatSuntingPengajuan, setSedangMemuatSuntingPengajuan] =
     useState(false);
   const [idAjukan, setIdAjukan] = useState("");
@@ -20,6 +21,12 @@ export default function useSuntingPengajuan(idPemesanan) {
         console.log("Data Pemesanan:", data);
         const idAjukanDariPemesanan = data.ID_Ajukan;
         setIdAjukan(idAjukanDariPemesanan);
+
+        const keranjangData = data.Data_Keranjang || [];
+        setDataKeranjang(keranjangData);
+
+        setNomorVAs(keranjangData.map((item) => item.Nomor_VA || ""));
+
         const pengajuanRef = doc(database, "ajukan", idAjukanDariPemesanan);
         const pengajuanSnap = await getDoc(pengajuanRef);
         if (pengajuanSnap.exists()) {
@@ -58,7 +65,17 @@ export default function useSuntingPengajuan(idPemesanan) {
         Status_Ajuan: statusPengajuan,
       });
 
-      toast.success("Pengajuan berhasil disunting!");
+      const updatedKeranjang = dataKeranjang.map((item, index) => ({
+        ...item,
+        Nomor_VA: nomorVAs[index],
+      }));
+
+      const pemesananRef = doc(database, "pemesanan", idPemesanan);
+      await updateDoc(pemesananRef, {
+        Data_Keranjang: updatedKeranjang,
+      });
+
+      toast.success("Pengajuan berhasil disunting dan Nomor VA diperbarui!");
     } catch (error) {
       toast.error("Gagal menyunting pengajuan: " + error.message);
     } finally {
@@ -77,5 +94,8 @@ export default function useSuntingPengajuan(idPemesanan) {
     setStatusPengajuan,
     suntingPengajuan,
     sedangMemuatSuntingPengajuan,
+    dataKeranjang,
+    nomorVAs,
+    setNomorVAs,
   };
 }
