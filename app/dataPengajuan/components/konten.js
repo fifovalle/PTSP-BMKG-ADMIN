@@ -120,7 +120,7 @@ function Konten({ tahunDipilih }) {
             ) : (
               daftarPengajuan
                 .filter(({ ajukan }) => ajukan.Status_Ajuan !== "Diterima")
-                .map(({ id, pengguna, Jenis_Ajukan, ajukan }, index) => {
+                .map(({ id, pengguna, ajukan }, index) => {
                   const apakahTerakhir = index === daftarPengajuan.length - 1;
                   const kelas = apakahTerakhir
                     ? "p-4"

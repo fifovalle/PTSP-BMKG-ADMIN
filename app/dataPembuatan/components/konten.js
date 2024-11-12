@@ -92,11 +92,10 @@ function Konten({ tahunDipilih }) {
           </thead>
 
           <tbody>
-            {saringPemesanan.filter(
-              (pemesanan) =>
-                pemesanan.Status_Pembayaran === "Lunas" &&
-                pemesanan.Status_Pesanan !== "Selesai"
-            ).length > 0 ? (
+            {saringPemesanan
+              .filter((pemesanan) => pemesanan.Status_Pembayaran === "Lunas")
+              .filter((pemesanan) => pemesanan.Status_Pesanan !== "Selesai")
+              .length > 0 ? (
               saringPemesanan
                 .filter(
                   (pemesanan) =>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+// PERPUSTAKAAN KAMI
 import { database } from "@/lib/firebaseConfig";
 
 export default function useSuntingPengajuan(idPemesanan) {
@@ -32,6 +33,10 @@ export default function useSuntingPengajuan(idPemesanan) {
         if (pengajuanSnap.exists()) {
           const pengajuanData = pengajuanSnap.data();
           setStatusPengajuan(pengajuanData.Status_Ajuan || "");
+
+          if (pengajuanData.Jenis_Ajukan === "Gratis") {
+            await updateDoc(pemesananRef, { Status_Pembayaran: "Lunas" });
+          }
         } else {
           toast.error("Data pengajuan tidak ditemukan!");
         }
@@ -65,10 +70,13 @@ export default function useSuntingPengajuan(idPemesanan) {
         Status_Ajuan: statusPengajuan,
       });
 
-      const updatedKeranjang = dataKeranjang.map((item, index) => ({
-        ...item,
-        Nomor_VA: nomorVAs[index],
-      }));
+      const updatedKeranjang = dataKeranjang.map((item, index) => {
+        const itemBaru = { ...item };
+        if (nomorVAs[index]) {
+          itemBaru.Nomor_VA = nomorVAs[index];
+        }
+        return itemBaru;
+      });
 
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
       await updateDoc(pemesananRef, {

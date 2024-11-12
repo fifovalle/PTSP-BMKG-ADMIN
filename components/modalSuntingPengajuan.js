@@ -78,26 +78,28 @@ const ModalSuntingPengajuan = ({
             <Option value="Ditolak">Ditolak</Option>
           </Select>
 
-          {dataKeranjang.map((dataKeranjang, indeks) => (
-            <div key={indeks} className="mb-4">
-              <Typography variant="h6">
-                Virtual Akun - {dataKeranjang.Jenis_Produk} (
-                {dataKeranjang.Pemilik || "Tidak Tersedia"})
-              </Typography>
-              <Typography className="mb-2 font-normal text-sm" variant="h6">
-                {dataKeranjang.Nama || "Tidak Tersedia"}
-              </Typography>
-              <Input
-                type="number"
-                label="Masukan Virtual Akun"
-                size="lg"
-                defaultValue={dataKeranjang.Nomor_VA || ""}
-                onChange={(e) =>
-                  tanganiPerubahanNomorVA(indeks, e.target.value)
-                }
-              />
-            </div>
-          ))}
+          {dataKeranjang
+            .filter((item) => item.hasOwnProperty("Nomor_VA"))
+            .map((dataKeranjang, indeks) => (
+              <div key={indeks} className="mb-4">
+                <Typography variant="h6">
+                  Virtual Akun - {dataKeranjang.Jenis_Produk} (
+                  {dataKeranjang.Pemilik || "Tidak Tersedia"})
+                </Typography>
+                <Typography className="mb-2 font-normal text-sm" variant="h6">
+                  {dataKeranjang.Nama || "Tidak Tersedia"}
+                </Typography>
+                <Input
+                  type="number"
+                  label="Masukan Virtual Akun"
+                  size="lg"
+                  defaultValue={dataKeranjang.Nomor_VA || ""}
+                  onChange={(e) =>
+                    tanganiPerubahanNomorVA(indeks, e.target.value)
+                  }
+                />
+              </div>
+            ))}
         </form>
       </DialogBody>
       <DialogFooter>

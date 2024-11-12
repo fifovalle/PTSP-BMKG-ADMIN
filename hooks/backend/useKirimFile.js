@@ -49,7 +49,6 @@ const useKirimFile = (idPemesanan) => {
       const penerimaanRef = doc(collection(database, "penerimaan"));
       await setDoc(penerimaanRef, {
         File: downloadURL,
-        ID_Pengguna: idPengguna,
         Tanggal_Pembuatan: serverTimestamp(),
       });
 
