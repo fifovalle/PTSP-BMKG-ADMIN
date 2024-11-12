@@ -1,9 +1,5 @@
 import { useState } from "react";
-import { doc, deleteDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { getAuth, deleteUser } from "firebase/auth";
-// PERPUSTAKAAN KAMI
-import { database } from "@/lib/firebaseConfig";
 
 const useHapusAdmin = () => {
   const [sedangMemuatHapusAdmin, setSedangMemuatHapusAdmin] = useState(false);
@@ -12,17 +8,21 @@ const useHapusAdmin = () => {
     try {
       setSedangMemuatHapusAdmin(true);
 
-      const referensiAdmin = doc(database, "admin", id);
-      await deleteDoc(referensiAdmin);
+      const response = await fetch("/api/hapus-admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: id }),
+      });
 
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user && user.uid === id) {
-        await deleteUser(user);
-        console.log("Pengguna dihapus dari Authentication");
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || "Terjadi kesalahan saat menghapus admin.");
       }
-
-      toast.success("Admin berhasil dihapus!");
     } catch (error) {
       toast.error("Terjadi kesalahan saat menghapus admin: " + error.message);
     } finally {

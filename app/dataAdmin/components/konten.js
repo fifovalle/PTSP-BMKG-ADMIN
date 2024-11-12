@@ -46,6 +46,7 @@ const Konten = ({ tahunDipilih }) => {
     setAdminYangTerpilih(idAdmin);
     setBukaModalHapusAdmin(true);
   };
+
   const hapus = async () => {
     if (adminYangTerpilih) {
       await hapusAdmin(adminYangTerpilih);
@@ -216,18 +217,20 @@ const Konten = ({ tahunDipilih }) => {
                           </Typography>
                         </td>
                         <td className={kelas}>
-                          <Tooltip content="Hapus Admin">
-                            <IconButton
-                              variant="text"
-                              onClick={() => konfirmasiHapus(id, Peran)}
-                            >
-                              {sedangMemuatHapusAdmin ? (
-                                <Memuat />
-                              ) : (
-                                <TrashIcon className="h-4 w-4" />
-                              )}
-                            </IconButton>
-                          </Tooltip>
+                          {Peran !== "Super Admin" && (
+                            <Tooltip content="Hapus Admin">
+                              <IconButton
+                                variant="text"
+                                onClick={() => konfirmasiHapus(id, Peran)}
+                              >
+                                {sedangMemuatHapusAdmin ? (
+                                  <Memuat />
+                                ) : (
+                                  <TrashIcon className="h-4 w-4" />
+                                )}
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         </td>
                       </tr>
                     );

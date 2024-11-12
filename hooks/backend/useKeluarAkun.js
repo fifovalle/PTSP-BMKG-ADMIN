@@ -14,6 +14,10 @@ const useKeluarAkun = () => {
       localStorage.removeItem("ID_Admin");
 
       await signOut(auth);
+
+      sessionStorage.clear();
+      localStorage.clear();
+
       toast.success("Anda telah keluar dari akun.");
       router.push("/");
     } catch (error) {

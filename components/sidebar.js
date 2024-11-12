@@ -38,6 +38,7 @@ import useKeluarAkun from "@/hooks/backend/useKeluarAkun";
 import useTampilkanBanyakData from "@/hooks/backend/useTampilkanBanyakData";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
+import { AiOutlineHistory } from "react-icons/ai";
 
 function Sidebar({ pengarah }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
@@ -251,6 +252,7 @@ function Sidebar({ pengarah }) {
             bukaDropdown === 3 ||
             lokasiSaatIni === "/dataIKM" ||
             lokasiSaatIni === "/dataPengajuan" ||
+            lokasiSaatIni === "/dataPembayaran" ||
             lokasiSaatIni === "/dataPembuatan" ||
             lokasiSaatIni === "/dataTransaksi"
           }
@@ -261,6 +263,7 @@ function Sidebar({ pengarah }) {
                 bukaDropdown === 3 ||
                 lokasiSaatIni === "/dataIKM" ||
                 lokasiSaatIni === "/dataPengajuan" ||
+                lokasiSaatIni === "/dataPembuatan" ||
                 lokasiSaatIni === "/dataPembuatan" ||
                 lokasiSaatIni === "/dataTransaksi"
                   ? "rotate-180"
@@ -312,6 +315,20 @@ function Sidebar({ pengarah }) {
               </ListItem>
 
               <ListItem
+                onClick={() => pengarah.push("/dataPembayaran")}
+                className={
+                  lokasiSaatIni === "/dataPembayaran"
+                    ? "bg-[#0F67B1] text-white"
+                    : ""
+                }
+              >
+                <ListItemPrefix>
+                  <CreditCardIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Pembayaran
+              </ListItem>
+
+              <ListItem
                 onClick={() => pengarah.push("/dataPembuatan")}
                 className={
                   lokasiSaatIni === "/dataPembuatan"
@@ -334,7 +351,7 @@ function Sidebar({ pengarah }) {
                 }
               >
                 <ListItemPrefix>
-                  <CreditCardIcon className="h-5 w-5" />
+                  <AiOutlineHistory className="h-5 w-5" />
                 </ListItemPrefix>
                 Riwayat Transaksi
               </ListItem>
