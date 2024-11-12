@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   collection,
   doc,
@@ -13,11 +13,29 @@ import { toast } from "react-toastify";
 import { database, storage } from "@/lib/firebaseConfig";
 
 const useKirimFile = (idPemesanan) => {
-  const [kirimFile, setKirimFile] = useState(null);
+  const [kirimFile, setKirimFile] = useState([]);
+  const [dataKeranjang, setDataKeranjang] = useState([]);
   const [sedangMemuatKirimFile, setSedangMemuatKirimFile] = useState(false);
 
+  const ambilDataKeranjang = async () => {
+    try {
+      const pemesananRef = doc(database, "pemesanan", idPemesanan);
+      const pemesananSnap = await getDoc(pemesananRef);
+
+      if (pemesananSnap.exists()) {
+        const dataPemesanan = pemesananSnap.data();
+        setDataKeranjang(dataPemesanan.Data_Keranjang || []);
+      } else {
+        toast.error("Dokumen pemesanan tidak ditemukan.");
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data keranjang:", error);
+      toast.error("Gagal mengambil data keranjang.");
+    }
+  };
+
   const kirim = async () => {
-    if (!kirimFile) {
+    if (kirimFile.length === 0) {
       toast.error("File belum dipilih.");
       return;
     }
@@ -38,24 +56,36 @@ const useKirimFile = (idPemesanan) => {
       if (!idPengguna)
         throw new Error("ID Pengguna tidak ditemukan di pemesanan.");
 
-      const fileRef = ref(
-        storage,
-        `Penerimaan/${idPengguna}/${kirimFile.name}`
-      );
-      await uploadBytes(fileRef, kirimFile);
+      const updatedDataKeranjang = [...dataKeranjang];
 
-      const downloadURL = await getDownloadURL(fileRef);
+      if (kirimFile.length !== dataKeranjang.length) {
+        toast.error("Jumlah file tidak sesuai dengan jumlah data keranjang.");
+        return;
+      }
 
-      const penerimaanRef = doc(collection(database, "penerimaan"));
-      await setDoc(penerimaanRef, {
-        File: downloadURL,
-        Tanggal_Pembuatan: serverTimestamp(),
-      });
+      for (let i = 0; i < kirimFile.length; i++) {
+        const file = kirimFile[i];
+        const keranjang = updatedDataKeranjang[i];
 
-      const idPenerimaan = penerimaanRef.id;
+        const fileRef = ref(storage, `Penerimaan/${idPengguna}/${file.name}`);
+        await uploadBytes(fileRef, file);
+
+        const downloadURL = await getDownloadURL(fileRef);
+
+        const penerimaanRef = doc(collection(database, "penerimaan"));
+        await setDoc(penerimaanRef, {
+          File: downloadURL,
+          Tanggal_Pembuatan: serverTimestamp(),
+        });
+
+        const idPenerimaan = penerimaanRef.id;
+
+        keranjang.File = downloadURL;
+        keranjang.ID_Penerimaan = idPenerimaan;
+      }
 
       await updateDoc(pemesananRef, {
-        ID_Penerimaan: idPenerimaan,
+        Data_Keranjang: updatedDataKeranjang,
         Status_Pesanan: "Selesai",
       });
 
@@ -68,10 +98,18 @@ const useKirimFile = (idPemesanan) => {
     }
   };
 
+  useEffect(() => {
+    if (idPemesanan) {
+      ambilDataKeranjang();
+    }
+  }, [idPemesanan]);
+
   return {
     kirim,
+    kirimFile,
     setKirimFile,
     sedangMemuatKirimFile,
+    dataKeranjang,
   };
 };
 

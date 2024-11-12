@@ -16,12 +16,19 @@ import useKirimFile from "@/hooks/backend/useKirimFile";
 import Memuat from "@/components/memuat";
 
 const ModalSuntingPembuatan = ({ terbuka, tertutup, pembuatanYangDipilih }) => {
-  const { kirim, setKirimFile, sedangMemuatKirimFile } =
-    useKirimFile(pembuatanYangDipilih);
+  const {
+    kirim,
+    kirimFile,
+    setKirimFile,
+    sedangMemuatKirimFile,
+    dataKeranjang,
+  } = useKirimFile(pembuatanYangDipilih);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setKirimFile(file);
+  const handleFileChange = (e, indeks) => {
+    const file = e.target.files[0];
+    const updatedFiles = [...kirimFile];
+    updatedFiles[indeks] = file;
+    setKirimFile(updatedFiles);
   };
 
   return (
@@ -50,12 +57,21 @@ const ModalSuntingPembuatan = ({ terbuka, tertutup, pembuatanYangDipilih }) => {
 
       <DialogBody divider>
         <form className="flex flex-col gap-4">
-          <div className="w-full">
-            <Typography className="mb-2" variant="h6">
-              Berkas
-            </Typography>
-            <Input type="file" size="lg" onChange={handleFileChange} />
-          </div>
+          {dataKeranjang.map((keranjang, indeks) => (
+            <div key={indeks} className="keranjang-item mb-4">
+              <div className="w-full mt-2">
+                <Typography className="mb-2" variant="h6">
+                  Berkas Untuk {keranjang.Nama}
+                </Typography>
+                <Input
+                  type="file"
+                  size="lg"
+                  onChange={(e) => handleFileChange(e, indeks)}
+                  className="file-input"
+                />
+              </div>
+            </div>
+          ))}
         </form>
       </DialogBody>
 
