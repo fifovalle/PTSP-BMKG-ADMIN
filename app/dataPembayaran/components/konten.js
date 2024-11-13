@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AiOutlineUpload } from "react-icons/ai";
+import { AiFillEye, AiOutlineUpload } from "react-icons/ai";
 import {
   Card,
   CardHeader,
@@ -12,10 +12,11 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 // PENGAIT KAMI
-import useTampilkanPembuatan from "@/hooks/backend/useTampilkanPembuatan";
+import useTampilkanPembayaran from "@/hooks/backend/useTampilkanPembayaran";
 import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 // KOMPONEN KAMI
-import ModalSuntingPembuatan from "@/components/modalSuntingPembuatan";
+import ModalSuntingPembayaran from "@/components/modalSuntingPembayaran";
+import ModalLihatPembayaran from "@/components/modalLihatPembayaran";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 
@@ -23,7 +24,9 @@ const judulTabel = ["Pembeli", "Tanggal Pemesanan", ""];
 
 function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
-  const [bukaModalSuntingPengajuan, setBukaModalSuntingPengajuan] =
+  const [bukaModalSuntingPembayaran, setBukaModalSuntingPembayaran] =
+    useState(false);
+  const [bukaModalLihatPembayaran, setBukaModalLihatPembayaran] =
     useState(false);
   const [pembuatanTerpilih, setPembuatanTerpilih] = useState(null);
   const dataBulanTahun = useTampilkanDataPerTahun();
@@ -34,7 +37,7 @@ function Konten({ tahunDipilih }) {
     halaman,
     ambilHalamanSebelumnya,
     ambilHalamanSelanjutnya,
-  } = useTampilkanPembuatan();
+  } = useTampilkanPembayaran();
 
   const saringPemesanan = daftarPemesanan.filter((item) => {
     const tanggal =
@@ -65,7 +68,7 @@ function Konten({ tahunDipilih }) {
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-1 flex items-center justify-between">
           <Typography variant="h5" color="blue-gray">
-            Daftar Pembuatan
+            Daftar Pembayaran
           </Typography>
         </div>
       </CardHeader>
@@ -92,15 +95,13 @@ function Konten({ tahunDipilih }) {
           </thead>
 
           <tbody>
-            {saringPemesanan
-              .filter((pemesanan) => pemesanan.Status_Pembayaran === "Lunas")
-              .filter((pemesanan) => pemesanan.Status_Pesanan !== "Selesai")
-              .length > 0 ? (
+            {saringPemesanan.filter(
+              (pemesanan) => pemesanan.Status_Pembayaran === "Sedang Ditinjau"
+            ).length > 0 ? (
               saringPemesanan
                 .filter(
                   (pemesanan) =>
-                    pemesanan.Status_Pembayaran === "Lunas" &&
-                    pemesanan.Status_Pembuatan !== "Selesai"
+                    pemesanan.Status_Pembayaran === "Sedang Ditinjau"
                 )
                 .map(({ id, pengguna, Tanggal_Pemesanan }, index) => {
                   const apakahTerakhir = index === saringPemesanan.length - 1;
@@ -147,11 +148,22 @@ function Konten({ tahunDipilih }) {
                         </Typography>
                       </td>
                       <td className={kelas}>
+                        <Tooltip content="Lihat Selengkapnya">
+                          <IconButton
+                            onClick={() => {
+                              setPembuatanTerpilih(id);
+                              setBukaModalLihatPembayaran(true);
+                            }}
+                            variant="text"
+                          >
+                            <AiFillEye className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip content="Sunting">
                           <IconButton
                             onClick={() => {
                               setPembuatanTerpilih(id);
-                              setBukaModalSuntingPengajuan(true);
+                              setBukaModalSuntingPembayaran(true);
                             }}
                             variant="text"
                           >
@@ -199,10 +211,16 @@ function Konten({ tahunDipilih }) {
         </div>
       </CardFooter>
 
-      <ModalSuntingPembuatan
-        terbuka={bukaModalSuntingPengajuan}
-        tertutup={setBukaModalSuntingPengajuan}
-        pembuatanYangDipilih={pembuatanTerpilih}
+      <ModalSuntingPembayaran
+        terbuka={bukaModalSuntingPembayaran}
+        tertutup={setBukaModalSuntingPembayaran}
+        pembayaranYangTerpilih={pembuatanTerpilih}
+      />
+
+      <ModalLihatPembayaran
+        terbuka={bukaModalLihatPembayaran}
+        tertutup={setBukaModalLihatPembayaran}
+        pembayaranYangTerpilih={pembuatanTerpilih}
       />
     </Card>
   );

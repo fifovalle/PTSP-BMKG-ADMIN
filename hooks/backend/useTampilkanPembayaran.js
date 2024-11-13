@@ -3,7 +3,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
 
-const useTampilkanPembuatan = (batasHalaman = 5) => {
+const useTampilkanPembayaran = (batasHalaman = 5) => {
   const [sedangMemuatPemesanan, setSedangMemuatPemesanan] = useState(false);
   const [daftarPemesanan, setDaftarPemesanan] = useState([]);
   const [totalPemesanan, setTotalPemesanan] = useState(0);
@@ -54,6 +54,22 @@ const useTampilkanPembuatan = (batasHalaman = 5) => {
           }
         }
 
+        if (pemesananData.ID_Transaksi) {
+          const transaksiRef = doc(
+            database,
+            "transaksi",
+            pemesananData.ID_Transaksi
+          );
+          const transaksiDoc = await getDoc(transaksiRef);
+
+          if (transaksiDoc.exists()) {
+            pemesananData.transaksi = {
+              id: transaksiDoc.id,
+              ...transaksiDoc.data(),
+            };
+          }
+        }
+
         pemesanans.push(pemesananData);
       }
 
@@ -94,4 +110,4 @@ const useTampilkanPembuatan = (batasHalaman = 5) => {
   };
 };
 
-export default useTampilkanPembuatan;
+export default useTampilkanPembayaran;

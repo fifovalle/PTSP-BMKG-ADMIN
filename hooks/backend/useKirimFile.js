@@ -86,7 +86,7 @@ const useKirimFile = (idPemesanan) => {
 
       await updateDoc(pemesananRef, {
         Data_Keranjang: updatedDataKeranjang,
-        Status_Pesanan: "Selesai",
+        Status_Pembuatan: "Selesai Pembuatan",
       });
 
       toast.success("File berhasil dikirim dan data diperbarui.");

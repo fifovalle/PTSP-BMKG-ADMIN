@@ -35,7 +35,10 @@ export default function useSuntingPengajuan(idPemesanan) {
           setStatusPengajuan(pengajuanData.Status_Ajuan || "");
 
           if (pengajuanData.Jenis_Ajukan === "Gratis") {
-            await updateDoc(pemesananRef, { Status_Pembayaran: "Lunas" });
+            await updateDoc(pemesananRef, {
+              Status_Pembayaran: "Lunas",
+              Total_Harga_Pesanan: 0,
+            });
           }
         } else {
           toast.error("Data pengajuan tidak ditemukan!");

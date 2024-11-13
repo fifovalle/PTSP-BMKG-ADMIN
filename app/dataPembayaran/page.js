@@ -5,9 +5,9 @@ import { ToastContainer } from "react-toastify";
 // KOMPONEN KAMI
 import Sidebar from "@/components/sidebar";
 import Napbar from "@/components/navbar";
-import Konten from "@/app/dataPembuatan/components/konten";
+import Konten from "@/app/dataPembayaran/components/konten";
 
-const DataPembuatan = () => {
+const DataPembayaran = () => {
   const pengarah = useRouter();
   const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
 
@@ -23,4 +23,4 @@ const DataPembuatan = () => {
   );
 };
 
-export default DataPembuatan;
+export default DataPembayaran;

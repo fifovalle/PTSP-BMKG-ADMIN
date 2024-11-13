@@ -30,7 +30,7 @@ export async function POST(req) {
     await deleteDoc(referensiAdmin);
 
     return NextResponse.json(
-      { message: "Admin berhasil dihapussss!" },
+      { message: "Admin berhasil dihapus!" },
       { status: 200 }
     );
   } catch (error) {

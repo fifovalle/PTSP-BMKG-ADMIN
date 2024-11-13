@@ -103,7 +103,7 @@ function Konten({ tahunDipilih }) {
               .filter(
                 (pemesanan) =>
                   pemesanan.Status_Pembayaran === "Lunas" &&
-                  pemesanan.Status_Pesanan === "Selesai"
+                  pemesanan.Status_Pembuatan === "Selesai"
               )
               .map(
                 (

@@ -8,14 +8,18 @@ import {
 import Image from "next/image";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // PENGAIT KAMI
-import useTampilkanPengajuan from "@/hooks/backend/useTampilkanPengajuan";
+import useTampilkanPembayaran from "@/hooks/backend/useTampilkanPembayaran";
 
-const ModalLihatPengajuan = ({ terbuka, tertutup, pengajuanYangTerpilih }) => {
-  const { daftarPengajuan } = useTampilkanPengajuan();
+const ModalLihatPembayaran = ({
+  terbuka,
+  tertutup,
+  pembayaranYangTerpilih,
+}) => {
+  const { daftarPemesanan } = useTampilkanPembayaran();
   const gambarBawaan = require("@/assets/images/profil.jpg");
 
-  const pengajuanTerpilih = daftarPengajuan.find(
-    (pengajuan) => pengajuan.id === pengajuanYangTerpilih
+  const pembayaranTerpilih = daftarPemesanan.find(
+    (pembayaran) => pembayaran.id === pembayaranYangTerpilih
   );
 
   return (
@@ -40,7 +44,7 @@ const ModalLihatPengajuan = ({ terbuka, tertutup, pengajuanYangTerpilih }) => {
         </IconButton>
       </div>
 
-      <DialogHeader className="text-black">Lihat Pengajuan</DialogHeader>
+      <DialogHeader className="text-black">Lihat Pembayaran</DialogHeader>
 
       <div className="absolute top-3 right-3">
         <IconButton
@@ -61,42 +65,40 @@ const ModalLihatPengajuan = ({ terbuka, tertutup, pengajuanYangTerpilih }) => {
         divider
         className="flex flex-col md:flex-row justify-evenly items-center p-6 bg-white rounded-b-lg"
       >
-        {pengajuanTerpilih ? (
+        {pembayaranTerpilih ? (
           <>
             <div className="flex flex-col items-center mb-4 md:mb-0">
-              {pengajuanTerpilih.ajukan?.File_Ajukan?.length > 0 ? (
-                pengajuanTerpilih.ajukan.File_Ajukan.map((file, index) => (
-                  <embed
-                    key={index}
-                    alt={`Dokumen Pengajuan ${index + 1}`}
-                    className="w-80 h-64 border-4 border-gray-300 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg mb-2"
-                    src={file}
-                  />
-                ))
+              {pembayaranTerpilih.transaksi?.Bukti_Pembayaran?.length > 0 ? (
+                pembayaranTerpilih.transaksi.Bukti_Pembayaran.map(
+                  (file, index) => (
+                    <embed
+                      key={index}
+                      alt={`Dokumen Pengajuan ${index + 1}`}
+                      className="w-80 h-64 border-4 border-gray-300 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg mb-2"
+                      src={file}
+                    />
+                  )
+                )
               ) : (
                 <p className="text-gray-500">Dokumen ajukan tidak tersedia</p>
               )}
-              <h3 className="text-center mt-3 font-semibold text-blue-700">
-                {pengajuanTerpilih.ajukan?.Nama_Ajukan ||
-                  "Nama ajukan tidak tersedia"}
-              </h3>
             </div>
 
             <div className="flex flex-col items-center">
               <Image
                 alt="Gambar Profil"
                 className="w-24 h-24 border-4 border-blue-500 rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
-                src={pengajuanTerpilih.pengguna?.Foto || gambarBawaan}
+                src={pembayaranTerpilih.pengguna?.Foto || gambarBawaan}
               />
               <div className="text-center mt-3">
                 <h2 className="text-2xl font-bold text-blue-900">
-                  {pengajuanTerpilih.pengguna?.Nama_Lengkap || "N/A"}
+                  {pembayaranTerpilih.pengguna?.Nama_Lengkap || "N/A"}
                 </h2>
                 <p className="text-blue-700">
-                  {pengajuanTerpilih.pengguna?.Email || "Email tidak tersedia"}
+                  {pembayaranTerpilih.pengguna?.Email || "Email tidak tersedia"}
                 </p>
                 <p className="text-blue-700">
-                  {pengajuanTerpilih.pengguna?.Jenis_Kelamin ||
+                  {pembayaranTerpilih.pengguna?.Jenis_Kelamin ||
                     "Tidak diketahui"}
                 </p>
               </div>
@@ -112,4 +114,4 @@ const ModalLihatPengajuan = ({ terbuka, tertutup, pengajuanYangTerpilih }) => {
   );
 };
 
-export default ModalLihatPengajuan;
+export default ModalLihatPembayaran;

@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { getAuth, signOut } from "firebase/auth"; // Firebase Auth for sign-out
 
 const useHapusAdmin = () => {
   const [sedangMemuatHapusAdmin, setSedangMemuatHapusAdmin] = useState(false);
+  const router = useRouter(); // For redirecting to the root page
 
   const hapusAdmin = async (id) => {
     try {
       setSedangMemuatHapusAdmin(true);
+      const auth = getAuth();
+      const penggunaSaatIni = auth.currentUser; // Get current logged-in user
 
       const response = await fetch("/api/hapus-admin", {
         method: "POST",
@@ -20,6 +25,13 @@ const useHapusAdmin = () => {
 
       if (response.ok) {
         toast.success(data.message);
+
+        if (penggunaSaatIni && penggunaSaatIni.uid === id) {
+          setTimeout(async () => {
+            await signOut(auth);
+            router.push("/");
+          }, 3000);
+        }
       } else {
         toast.error(data.error || "Terjadi kesalahan saat menghapus admin.");
       }
