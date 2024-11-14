@@ -48,7 +48,6 @@ export default function useSuntingPembayaran(idPemesanan) {
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
       await updateDoc(pemesananRef, {
         Status_Pembayaran: statusPembayaran,
-        Status_Pembayaran: "Lunas",
       });
       toast.success("Status pembayaran berhasil diperbarui.");
     } catch (error) {

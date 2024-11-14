@@ -65,7 +65,7 @@ const ModalSuntingPembayaran = ({
             onChange={(value) => setStatusPembayaran(value)}
           >
             <Option value="Sedang Ditinjau">Sedang Ditinjau</Option>
-            <Option value="Diterima">Diterima</Option>
+            <Option value="Lunas">Lunas</Option>
             <Option value="Ditolak">Ditolak</Option>
           </Select>
         </form>

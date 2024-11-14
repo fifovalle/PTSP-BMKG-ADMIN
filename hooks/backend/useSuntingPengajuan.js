@@ -82,9 +82,17 @@ export default function useSuntingPengajuan(idPemesanan) {
       });
 
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
-      await updateDoc(pemesananRef, {
-        Data_Keranjang: updatedKeranjang,
-      });
+
+      if (statusPengajuan === "Diterima") {
+        await updateDoc(pemesananRef, {
+          Status_Pembayaran: "Lunas",
+          Data_Keranjang: updatedKeranjang,
+        });
+      } else {
+        await updateDoc(pemesananRef, {
+          Data_Keranjang: updatedKeranjang,
+        });
+      }
 
       toast.success("Pengajuan berhasil disunting dan Nomor VA diperbarui!");
     } catch (error) {
