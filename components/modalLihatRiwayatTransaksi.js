@@ -168,7 +168,7 @@ const ModalLihatRiwayatTransaksi = ({
     }
   };
 
-  const unduhFaktur = (dataKeranjang = []) => {
+  const unduhFaktur = (dataKeranjang = [], pemesanan, userData) => {
     if (!dataKeranjang || dataKeranjang.length === 0) {
       alert("Tidak ada data faktur untuk diunduh.");
       return;
@@ -177,38 +177,118 @@ const ModalLihatRiwayatTransaksi = ({
     const doc = new jsPDF();
     const tanggal = new Date().toLocaleDateString("id-ID");
 
-    doc.setFontSize(18);
-    doc.text("Faktur Transaksi", 10, 10);
+    doc.setFontSize(26);
+    doc.setTextColor(41, 128, 185);
+    doc.text("FAKTUR PEMBAYARAN", 105, 20, { align: "center" });
+
+    doc.setLineWidth(0.5);
+    doc.line(14, 30, 196, 30);
 
     doc.setFontSize(12);
-    doc.text(`Tanggal: ${tanggal}`, 10, 20);
-    doc.text("Detail Pesanan:", 10, 30);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Nomor Invoice: ${pemesanan.id}`, 14, 40);
+    doc.text(`Tanggal: ${tanggal}`, 14, 46);
+    doc.text(
+      `Status Pembayaran: ${pemesanan.Status_Pembayaran || "Belum Dibayar"}`,
+      14,
+      52
+    );
 
+    doc.setFontSize(12);
+    doc.text("Detail Pelanggan:", 14, 60);
+    doc.setFont("helvetica", "italic");
+    doc.text(`Nama: ${userData.Nama_Lengkap || "Tidak diketahui"}`, 14, 66);
+    doc.text(`Email: ${userData.Email || "Tidak diketahui"}`, 14, 72);
+    doc.text(`Alamat: ${userData.Alamat || "Tidak tersedia"}`, 14, 78);
+    doc.setFont("helvetica", "normal");
+
+    doc.line(14, 84, 196, 84);
+
+    const tableHeaders = [
+      [
+        "No",
+        "Nama Produk",
+        "Pemilik",
+        "Kuantitas",
+        "Harga Satuan",
+        "Total Harga",
+      ],
+    ];
     const tableData = dataKeranjang.map((item, index) => [
       index + 1,
       item.Nama || "Nama tidak tersedia",
-      item.Pemilik || "Pemilik tidak tersedia",
+      item.Pemilik || "Pemilik tidak diketahui",
       `${item.Kuantitas}x`,
       formatRupiah(item.Harga),
       formatRupiah(item.Harga * item.Kuantitas),
     ]);
 
-    const tableHeaders = [
-      "No",
-      "Nama Produk",
-      "Pemilik",
-      "Kuantitas",
-      "Harga Satuan",
-      "Total Harga",
-    ];
-
     doc.autoTable({
-      head: [tableHeaders],
+      head: tableHeaders,
       body: tableData,
-      startY: 40,
+      startY: 90,
+      styles: {
+        fontSize: 10,
+        cellPadding: 5,
+        lineWidth: 0.3,
+        lineColor: [41, 128, 185],
+        font: "helvetica",
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        halign: "center",
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+      columnStyles: {
+        0: { halign: "center" },
+        1: { halign: "left" },
+        2: { halign: "left" },
+        3: { halign: "center" },
+        4: { halign: "right" },
+        5: { halign: "right" },
+      },
     });
 
-    doc.save(`faktur_transaksi_${tanggal.replace(/\//g, "-")}.pdf`);
+    const totalHarga = dataKeranjang.reduce(
+      (total, item) => total + item.Harga * item.Kuantitas,
+      0
+    );
+    const akhirY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Total Pesanan: ${formatRupiah(totalHarga)}`, 14, akhirY);
+
+    doc.setFontSize(10);
+    doc.text(
+      "Catatan: Harap simpan invoice ini untuk referensi.",
+      14,
+      akhirY + 10
+    );
+
+    doc.line(14, akhirY + 18, 196, akhirY + 18);
+
+    doc.setFontSize(10);
+    doc.setTextColor(41, 128, 185);
+    doc.text("Terima kasih atas pembelian Anda!", 14, akhirY + 30);
+
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(
+      "Hubungi kami di: +62 123 456 7890 atau email@company.com",
+      14,
+      akhirY + 40
+    );
+    doc.text(
+      "Alamat Perusahaan: Jl. Raya No. 123, Jakarta, Indonesia",
+      14,
+      akhirY + 45
+    );
+
+    doc.save(`faktur_${tanggal.replace(/\//g, "-")}.pdf`);
   };
 
   return (
@@ -738,7 +818,11 @@ const ModalLihatRiwayatTransaksi = ({
                         variant="outlined"
                         color="green"
                         onClick={() =>
-                          unduhFaktur(transaksiTerpilih.Data_Keranjang)
+                          unduhFaktur(
+                            transaksiTerpilih.Data_Keranjang,
+                            transaksiTerpilih,
+                            transaksiTerpilih.pengguna
+                          )
                         }
                       >
                         <AiOutlineDownload className="h-4 w-4 text-green-800" />
