@@ -3,21 +3,21 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
 
-const useTampilkanIkm = (batasHalaman = 5) => {
-  const [sedangMemuatIkm, setSedangMemuatIkm] = useState(false);
-  const [daftarIkm, setDaftarIkm] = useState([]);
-  const [totalIkm, setTotalIkm] = useState(0);
+const useTampilkanRiwayatTransaksi = (batasHalaman = 5) => {
+  const [sedangMemuatPengajuan, setSedangMemuatPengajuan] = useState(false);
+  const [daftarTransaksi, setDaftarTransaksi] = useState([]);
+  const [totalPengajuan, setTotalPengajuan] = useState(0);
   const [halaman, setHalaman] = useState(1);
 
-  const ambilDaftarIkm = useCallback(async () => {
+  const ambilDaftarTransaksi = useCallback(async () => {
     const referensiPemesanan = collection(database, "pemesanan");
     try {
-      setSedangMemuatIkm(true);
+      setSedangMemuatPengajuan(true);
       const snapshot = await getDocs(referensiPemesanan);
       const pemesanans = [];
 
       const totalDocs = snapshot.docs.length;
-      setTotalIkm(totalDocs);
+      setTotalPengajuan(totalDocs);
 
       const startIndex = (halaman - 1) * batasHalaman;
       const endIndex = startIndex + batasHalaman;
@@ -71,40 +71,32 @@ const useTampilkanIkm = (batasHalaman = 5) => {
             };
           }
 
-          const ikmRef = doc(database, "ikm", pemesananDoc.id);
-          const ikmDoc = await getDoc(ikmRef);
+          if (pemesananData.ID_Transaksi) {
+            try {
+              const transaksiRef = doc(
+                database,
+                "transaksi",
+                pemesananData.ID_Transaksi
+              );
+              const transaksiDoc = await getDoc(transaksiRef);
 
-          if (ikmDoc.exists()) {
-            const ikmData = {
-              id: ikmDoc.id,
-              ...ikmDoc.data(),
-            };
-
-            if (
-              typeof ikmData.Opsi_Yang_Dipilih === "object" &&
-              !Array.isArray(ikmData.Opsi_Yang_Dipilih)
-            ) {
-              const opsiDipilih = Object.values(
-                ikmData.Opsi_Yang_Dipilih
-              ).flat();
-              ikmData.Opsi_Yang_Dipilih = opsiDipilih;
-            } else if (!Array.isArray(ikmData.Opsi_Yang_Dipilih)) {
-              ikmData.Opsi_Yang_Dipilih = [];
+              if (transaksiDoc.exists()) {
+                pemesananData.transaksi = {
+                  id: transaksiDoc.id,
+                  ...transaksiDoc.data(),
+                };
+              }
+            } catch (error) {
+              console.error(
+                "Error pada dokumen transaksi:",
+                pemesananData.ID_Transaksi,
+                error
+              );
             }
-
-            if (Array.isArray(ikmData.ikmResponses)) {
-              ikmData.ikmResponses = ikmData.ikmResponses.map((response) => ({
-                ...response,
-              }));
-            } else {
-              ikmData.ikmResponses = [];
-            }
-
-            pemesananData.ikm = ikmData;
           } else {
-            console.log(
-              "IKM document not found for pemesanan ID:",
-              pemesananDoc.id
+            console.warn(
+              "ID_Transaksi tidak ditemukan pada data:",
+              pemesananData
             );
           }
 
@@ -112,19 +104,19 @@ const useTampilkanIkm = (batasHalaman = 5) => {
         }
       }
 
-      setDaftarIkm(pemesanans);
+      setDaftarTransaksi(pemesanans);
     } catch (error) {
       toast.error(
-        "Terjadi kesalahan saat mengambil data IKM: " + error.message
+        "Terjadi kesalahan saat mengambil data pemesanan: " + error.message
       );
     } finally {
-      setSedangMemuatIkm(false);
+      setSedangMemuatPengajuan(false);
     }
   }, [halaman, batasHalaman]);
 
   useEffect(() => {
-    ambilDaftarIkm();
-  }, [ambilDaftarIkm]);
+    ambilDaftarTransaksi();
+  }, [ambilDaftarTransaksi]);
 
   const ambilHalamanSebelumnya = () => {
     if (halaman > 1) {
@@ -133,7 +125,7 @@ const useTampilkanIkm = (batasHalaman = 5) => {
   };
 
   const ambilHalamanSelanjutnya = () => {
-    const totalHalaman = Math.ceil(totalIkm / batasHalaman);
+    const totalHalaman = Math.ceil(totalPengajuan / batasHalaman);
     if (halaman < totalHalaman) {
       setHalaman(halaman + 1);
     }
@@ -141,12 +133,12 @@ const useTampilkanIkm = (batasHalaman = 5) => {
 
   return {
     halaman,
-    totalIkm,
-    daftarIkm,
+    totalPengajuan,
+    daftarTransaksi,
     ambilHalamanSebelumnya,
     ambilHalamanSelanjutnya,
-    sedangMemuatIkm,
+    sedangMemuatPengajuan,
   };
 };
 
-export default useTampilkanIkm;
+export default useTampilkanRiwayatTransaksi;

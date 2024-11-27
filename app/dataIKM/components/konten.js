@@ -17,8 +17,9 @@ import {
 } from "@material-tailwind/react";
 // PENGAIT KAMI
 import useKonversiDataIKMKePdf from "@/hooks/backend/useKonversiDataIKMKePdf";
-import useTampilkanIKM from "@/hooks/backend/useTampilkanDataIKM";
+import useTampilkanDataIKM from "@/hooks/backend/useTampilkanDataIKM";
 import useHapusIKM from "@/hooks/backend/useHapusDataIKM";
+import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 // KOMPONEN KAMI
@@ -34,19 +35,20 @@ const judulTabel = [
   "Aksi",
 ];
 
-function Konten() {
+function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
   const [bukaModalLihatIKM, setBukaModalLihatIKM] = useState(false);
   const [bukaModalHapusIKM, setBukaModalHapusIKM] = useState(false);
   const [ikmYangTerpilih, setIkmYangTerpilih] = useState(null);
+  const dataBulanTahun = useTampilkanDataPerTahun();
   const {
-    daftarIKM,
-    sedangMemuatIKM,
+    halaman,
+    totalIkm,
+    daftarIkm,
     ambilHalamanSebelumnya,
     ambilHalamanSelanjutnya,
-    halaman,
-    totalIKM,
-  } = useTampilkanIKM();
+    sedangMemuatIkm,
+  } = useTampilkanDataIKM();
   const { unduhPdf } = useKonversiDataIKMKePdf();
   const { hapusIKM } = useHapusIKM();
   const [sedangMemuatHapusIKM, setSedangMemuatHapusIKM] = useState(false);
@@ -61,6 +63,30 @@ function Konten() {
         setSedangMemuatHapusIKM(false);
       });
   };
+
+  const saringIkm = daftarIkm.filter((item) => {
+    const tanggal =
+      item.Tanggal_Pembuatan_Akun ||
+      item.Tanggal_Pembuatan ||
+      item.Tanggal_Pemesanan;
+    if (!tanggal) return false;
+    const dateObj =
+      tanggal instanceof Date ? tanggal : new Date(tanggal.seconds * 1000);
+    const tahun = dateObj.getFullYear();
+    const bulanIndex = dateObj.getMonth();
+    if (tahunDipilih === "Pilih Tahun") {
+      return true;
+    }
+    if (!dataBulanTahun || dataBulanTahun.length === 0) {
+      return false;
+    }
+    if (bulanIndex < 0 || bulanIndex >= 12) {
+      return false;
+    }
+    const bulanNama = bulan[bulanIndex];
+    const bulanTahunDipilih = `${bulanNama} ${tahun}`;
+    return bulanTahunDipilih === tahunDipilih;
+  });
 
   return (
     <Card className="h-full w-full">
@@ -94,44 +120,27 @@ function Konten() {
           </thead>
 
           <tbody>
-            {sedangMemuatIKM ? (
-              <tr>
-                <td colSpan="5" className="text-center py-4">
-                  Memuat data...
-                </td>
-              </tr>
-            ) : (
-              daftarIKM.map(
+            {saringIkm
+              .filter(
+                (pemesanan) => pemesanan.Status_Pengisian_IKM === "Telah Diisi"
+              )
+              .map(
                 (
-                  { id, referensi, Jenis_Produk, Tanggal_Pembuatan_IKM },
+                  { id, pengguna, Tanggal_Pemesanan, Data_Keranjang },
                   index
                 ) => {
-                  const { data } = referensi || {};
-                  const Nama_Lengkap =
-                    data?.Nama_Lengkap || "Nama tidak tersedia";
-                  const Email = data?.Email || "Email tidak tersedia";
-                  const foto = data?.foto || gambarBawaan;
-                  const NIK = data?.No_Identitas || "NIK tidak tersedia";
-                  const apakahTerakhir = index === daftarIKM.length - 1;
+                  const apakahTerakhir = index === daftarIkm.length - 1;
                   const kelas = apakahTerakhir
                     ? "p-4"
                     : "p-4 border-b border-blue-gray-50";
-
-                  const instansi = referensi
-                    ? referensi.type === "perorangan"
-                      ? "Masyarakat Umum"
-                      : "Instansi"
-                    : "Tidak Diketahui";
-
-                  const jenisLayanan = Jenis_Produk || "Tidak diketahui";
 
                   return (
                     <tr key={id}>
                       <td className={kelas}>
                         <div className="flex items-center gap-3">
                           <Image
-                            src={foto || gambarBawaan}
-                            alt={Nama_Lengkap}
+                            src={pengguna.Foto || gambarBawaan}
+                            alt={pengguna.Nama_Lengkap}
                             width={40}
                             height={40}
                             className="rounded-full"
@@ -142,14 +151,14 @@ function Konten() {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {Nama_Lengkap}
+                              {pengguna.Nama_Lengkap}
                             </Typography>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal opacity-70"
                             >
-                              {Email}
+                              {pengguna.Email}
                             </Typography>
                           </div>
                         </div>
@@ -162,28 +171,40 @@ function Konten() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {instansi}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {NIK}
+                            {pengguna.NPWP}
                           </Typography>
                         </div>
                       </td>
 
                       <td className={kelas}>
-                        <div className="flex flex-col">
+                        {Data_Keranjang && Data_Keranjang.length > 0 ? (
+                          Data_Keranjang.map((dataKeranjang, idx) => (
+                            <div key={idx} className="flex flex-col mb-2">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {dataKeranjang.Jenis_Produk}
+                              </Typography>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {dataKeranjang.Nama}
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {jenisLayanan}
+                            Tidak ada jenis produk
                           </Typography>
-                        </div>
+                        )}
                       </td>
 
                       <td className={kelas}>
@@ -192,7 +213,7 @@ function Konten() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {formatTanggal(Tanggal_Pembuatan_IKM)}
+                          {formatTanggal(Tanggal_Pemesanan)}
                         </Typography>
                       </td>
 
@@ -237,24 +258,29 @@ function Konten() {
                     </tr>
                   );
                 }
-              )
-            )}
+              )}
           </tbody>
         </table>
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Halaman {halaman} dari {Math.ceil(totalIKM / 5)}
+          Halaman {halaman} dari {Math.ceil(totalIkm / 5)}
         </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm" onClick={ambilHalamanSebelumnya}>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={ambilHalamanSebelumnya}
+            variant="outlined"
+            size="sm"
+            disabled={sedangMemuatIkm || halaman === 1}
+          >
             Sebelumnya
           </Button>
           <Button
+            onClick={ambilHalamanSelanjutnya}
             variant="outlined"
             size="sm"
-            onClick={ambilHalamanSelanjutnya}
+            disabled={sedangMemuatIkm || halaman === Math.ceil(totalIkm / 5)}
           >
             Selanjutnya
           </Button>
@@ -270,8 +296,8 @@ function Konten() {
       />
       <ModalLihatIKM
         terbuka={bukaModalLihatIKM}
-        tutupModal={setBukaModalLihatIKM}
-        idIKM={ikmYangTerpilih}
+        tertutup={setBukaModalLihatIKM}
+        ikmYangTerpilihId={ikmYangTerpilih}
       />
     </Card>
   );

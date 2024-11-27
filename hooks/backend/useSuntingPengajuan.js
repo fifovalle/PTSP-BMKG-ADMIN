@@ -51,13 +51,14 @@ export default function useSuntingPengajuan(idPemesanan) {
     }
   };
 
-  const validasiFormulir = () => {
-    if (!statusPengajuan) {
-      toast.error("Masukkan status pengajuan");
-      return false;
-    }
-    return true;
-  };
+  const validasiFormulir = () =>
+    !statusPengajuan
+      ? (toast.error("Masukkan status pengajuan"), false)
+      : !dataKeranjang || dataKeranjang.length === 0
+      ? (toast.error("Data keranjang tidak boleh kosong"), false)
+      : nomorVAs.some((va) => !va)
+      ? (toast.error("Semua nomor VA harus diisi"), false)
+      : true;
 
   const suntingPengajuan = async () => {
     setSedangMemuatSuntingPengajuan(true);
@@ -83,16 +84,9 @@ export default function useSuntingPengajuan(idPemesanan) {
 
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
 
-      if (statusPengajuan === "Diterima") {
-        await updateDoc(pemesananRef, {
-          Status_Pembayaran: "Lunas",
-          Data_Keranjang: updatedKeranjang,
-        });
-      } else {
-        await updateDoc(pemesananRef, {
-          Data_Keranjang: updatedKeranjang,
-        });
-      }
+      await updateDoc(pemesananRef, {
+        Data_Keranjang: updatedKeranjang,
+      });
 
       toast.success("Pengajuan berhasil disunting dan Nomor VA diperbarui!");
     } catch (error) {

@@ -1,4 +1,5 @@
-import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/solid";
+import React, { useState } from "react";
+import { EyeIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -12,14 +13,16 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 // PENGAIT KAMI
-import useKonversiDataTransaksiKePdf from "@/hooks/backend/useKonversiDataTransaksiKePdf";
 import useTampilkanTransaksi from "@/hooks/backend/useTampilkanTransaksi";
 import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 import { formatRupiah } from "@/constants/formatRupiah";
+// KOMPONEN KAMI
+import ModalLihatRiwayatTransaksi from "@/components/modalLihatRiwayatTransaksi";
 
 const judulTabel = [
+  "Nomor Surat",
   "Pembeli",
   "Produk",
   "Kuantitas & Total",
@@ -30,8 +33,11 @@ const judulTabel = [
 
 function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
-  const { unduhPdf } = useKonversiDataTransaksiKePdf();
   const dataBulanTahun = useTampilkanDataPerTahun();
+  const [bukaModalLihatRiwayatTransaksi, setBukaModalLihatRiwayatTransaksi] =
+    useState(false);
+  const [riwayatTransaksiYangDipilih, setRiwayatTransaksiYangDipilih] =
+    useState(null);
   const {
     halaman,
     totalTransaksi,
@@ -103,7 +109,9 @@ function Konten({ tahunDipilih }) {
               .filter(
                 (pemesanan) =>
                   pemesanan.Status_Pembayaran === "Lunas" &&
-                  pemesanan.Status_Pembuatan === "Selesai"
+                  pemesanan.Status_Pembuatan === "Selesai Pembuatan" &&
+                  pemesanan.Status_Pengisian_IKM === "Telah Diisi" &&
+                  pemesanan.Status_Pesanan === "Selesai"
               )
               .map(
                 (
@@ -124,6 +132,33 @@ function Konten({ tahunDipilih }) {
 
                   return (
                     <tr key={id}>
+                      <td className={kelas}>
+                        {Data_Keranjang && Data_Keranjang.length > 0 ? (
+                          [
+                            ...new Set(
+                              Data_Keranjang.map((item) => item.Nomor_Surat)
+                            ),
+                          ].map((nomorSurat, idx) => (
+                            <div key={idx} className="flex flex-col mb-2">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {nomorSurat}
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            Tidak ada produk
+                          </Typography>
+                        )}
+                      </td>
                       <td className={kelas}>
                         <div className="flex items-center gap-3">
                           <Image
@@ -238,14 +273,15 @@ function Konten({ tahunDipilih }) {
                         </Typography>
                       </td>
                       <td className={kelas}>
-                        <Tooltip content="Unduh Transaksi">
-                          <IconButton variant="text" onClick={unduhPdf}>
-                            <ArrowDownTrayIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip content="Hapus Transaksi">
-                          <IconButton variant="text">
-                            <TrashIcon className="h-4 w-4" />
+                        <Tooltip content="Lihat Selengkapnya">
+                          <IconButton
+                            onClick={() => {
+                              setRiwayatTransaksiYangDipilih(id);
+                              setBukaModalLihatRiwayatTransaksi(true);
+                            }}
+                            variant="text"
+                          >
+                            <EyeIcon className="h-4 w-4" />
                           </IconButton>
                         </Tooltip>
                       </td>
@@ -282,6 +318,12 @@ function Konten({ tahunDipilih }) {
           </Button>
         </div>
       </CardFooter>
+
+      <ModalLihatRiwayatTransaksi
+        terbuka={bukaModalLihatRiwayatTransaksi}
+        tertutup={setBukaModalLihatRiwayatTransaksi}
+        riyawatTransaksiYangDipilih={riwayatTransaksiYangDipilih}
+      />
     </Card>
   );
 }

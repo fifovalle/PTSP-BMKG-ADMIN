@@ -19,7 +19,9 @@ const ModalSuntingPembuatan = ({ terbuka, tertutup, pembuatanYangDipilih }) => {
   const {
     kirim,
     kirimFile,
+    nomorSurat,
     setKirimFile,
+    setNomorSurat,
     sedangMemuatKirimFile,
     dataKeranjang,
   } = useKirimFile(pembuatanYangDipilih);
@@ -57,6 +59,19 @@ const ModalSuntingPembuatan = ({ terbuka, tertutup, pembuatanYangDipilih }) => {
 
       <DialogBody divider>
         <form className="flex flex-col gap-4">
+          <div className="w-full mt-2">
+            <Typography className="mb-2" variant="h6">
+              Nomor Surat
+            </Typography>
+            <Input
+              value={nomorSurat}
+              onChange={(e) => setNomorSurat(e.target.value)}
+              label="Nomor Surat"
+              type="text"
+              size="lg"
+            />
+          </div>
+
           {dataKeranjang.map((keranjang, indeks) => (
             <div key={indeks} className="keranjang-item mb-4">
               <div className="w-full mt-2">

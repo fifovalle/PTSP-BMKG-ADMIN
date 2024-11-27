@@ -14,6 +14,7 @@ import { database, storage } from "@/lib/firebaseConfig";
 
 const useKirimFile = (idPemesanan) => {
   const [kirimFile, setKirimFile] = useState([]);
+  const [nomorSurat, setNomorSurat] = useState("");
   const [dataKeranjang, setDataKeranjang] = useState([]);
   const [sedangMemuatKirimFile, setSedangMemuatKirimFile] = useState(false);
 
@@ -82,6 +83,7 @@ const useKirimFile = (idPemesanan) => {
 
         keranjang.File = downloadURL;
         keranjang.ID_Penerimaan = idPenerimaan;
+        keranjang.Nomor_Surat = nomorSurat;
       }
 
       await updateDoc(pemesananRef, {
@@ -107,7 +109,9 @@ const useKirimFile = (idPemesanan) => {
   return {
     kirim,
     kirimFile,
+    nomorSurat,
     setKirimFile,
+    setNomorSurat,
     sedangMemuatKirimFile,
     dataKeranjang,
   };

@@ -14,7 +14,7 @@ const useTampilkanTransaksi = (batasHalaman = 5) => {
     try {
       setSedangMemuatTransaksi(true);
       const snapshot = await getDocs(referensiPemesanan);
-      const pemesanans = [];
+      const pemesanan = [];
 
       const totalDocs = snapshot.docs.length;
       setTotalTransaksi(totalDocs);
@@ -33,49 +33,63 @@ const useTampilkanTransaksi = (batasHalaman = 5) => {
             ...pemesananDoc.data(),
           };
 
-          const penggunaRef = doc(
-            database,
-            "perorangan",
-            pemesananData.ID_Pengguna
-          );
-          const penggunaDoc = await getDoc(penggunaRef);
-
-          if (penggunaDoc.exists()) {
-            pemesananData.pengguna = {
-              id: penggunaDoc.id,
-              ...penggunaDoc.data(),
-            };
-          } else {
-            const perusahaanRef = doc(
+          if (pemesananData.ID_Pengguna) {
+            const penggunaRef = doc(
               database,
-              "perusahaan",
+              "perorangan",
               pemesananData.ID_Pengguna
             );
-            const perusahaanDoc = await getDoc(perusahaanRef);
+            const penggunaDoc = await getDoc(penggunaRef);
 
-            if (perusahaanDoc.exists()) {
+            if (penggunaDoc.exists()) {
               pemesananData.pengguna = {
-                id: perusahaanDoc.id,
-                ...perusahaanDoc.data(),
+                id: penggunaDoc.id,
+                ...penggunaDoc.data(),
               };
+            } else {
+              const perusahaanRef = doc(
+                database,
+                "perusahaan",
+                pemesananData.ID_Pengguna
+              );
+              const perusahaanDoc = await getDoc(perusahaanRef);
+
+              if (perusahaanDoc.exists()) {
+                pemesananData.pengguna = {
+                  id: perusahaanDoc.id,
+                  ...perusahaanDoc.data(),
+                };
+              } else {
+                pemesananData.pengguna = null;
+                console.error(
+                  `Pengguna dengan ID ${pemesananData.ID_Pengguna} tidak ditemukan.`
+                );
+              }
             }
           }
 
-          const ajukanRef = doc(database, "ajukan", pemesananData.ID_Ajukan);
-          const ajukanDoc = await getDoc(ajukanRef);
+          if (pemesananData.ID_Ajukan) {
+            const ajukanRef = doc(database, "ajukan", pemesananData.ID_Ajukan);
+            const ajukanDoc = await getDoc(ajukanRef);
 
-          if (ajukanDoc.exists()) {
-            pemesananData.ajukan = {
-              id: ajukanDoc.id,
-              ...ajukanDoc.data(),
-            };
+            if (ajukanDoc.exists()) {
+              pemesananData.ajukan = {
+                id: ajukanDoc.id,
+                ...ajukanDoc.data(),
+              };
+            } else {
+              pemesananData.ajukan = null;
+              console.error(
+                `Data ajukan dengan ID ${pemesananData.ID_Ajukan} tidak ditemukan.`
+              );
+            }
           }
 
-          pemesanans.push(pemesananData);
+          pemesanan.push(pemesananData);
         }
       }
 
-      setDaftarTransaksi(pemesanans);
+      setDaftarTransaksi(pemesanan);
     } catch (error) {
       toast.error(
         "Terjadi kesalahan saat mengambil data pemesanan: " + error.message

@@ -23,7 +23,14 @@ import ModalLihatPengajuan from "@/components/modalLihatPengajuan";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 
-const judulTabel = ["Pembeli", "Status", "Jenis", "Tanggal Pengajuan", ""];
+const judulTabel = [
+  "Pembeli",
+  "Produk",
+  "Status",
+  "Jenis",
+  "Tanggal Pengajuan",
+  "",
+];
 
 function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
@@ -120,7 +127,7 @@ function Konten({ tahunDipilih }) {
             ) : (
               daftarPengajuan
                 .filter(({ ajukan }) => ajukan.Status_Ajuan !== "Diterima")
-                .map(({ id, pengguna, ajukan }, index) => {
+                .map(({ id, pengguna, Data_Keranjang, ajukan }, index) => {
                   const apakahTerakhir = index === daftarPengajuan.length - 1;
                   const kelas = apakahTerakhir
                     ? "p-4"
@@ -154,6 +161,18 @@ function Konten({ tahunDipilih }) {
                             </Typography>
                           </div>
                         </div>
+                      </td>
+                      <td className={kelas}>
+                        {Data_Keranjang.map((Data_Keranjang, indeks) => (
+                          <Typography
+                            key={indeks}
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {Data_Keranjang.Nama}
+                          </Typography>
+                        ))}
                       </td>
                       <td className={kelas}>
                         <div className="w-max">

@@ -16,25 +16,19 @@ export default function useSuntingPembayaran(idPemesanan) {
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
       const docSnap = await getDoc(pemesananRef);
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setStatusPembayaran(data.Status_Pembayaran || "");
-      } else {
-        toast.error("Data pemesanan tidak ditemukan.");
-      }
+      docSnap.exists()
+        ? setStatusPembayaran(docSnap.data().Status_Pembayaran || "")
+        : toast.error("Data pemesanan tidak ditemukan.");
     } catch (error) {
       console.error("Gagal mengambil data pembayaran:", error);
       toast.error("Terjadi kesalahan saat mengambil data pembayaran.");
     }
   };
 
-  const validasiFormulir = () => {
-    if (!statusPembayaran) {
-      toast.error("Masukkan status pembayaran");
-      return false;
-    }
-    return true;
-  };
+  const validasiFormulir = () =>
+    !statusPembayaran
+      ? (toast.error("Masukkan status pembayaran"), false)
+      : true;
 
   const suntingPembayaran = async () => {
     setSedangMemuatSuntingPembayaran(true);
@@ -59,9 +53,7 @@ export default function useSuntingPembayaran(idPemesanan) {
   };
 
   useEffect(() => {
-    if (idPemesanan) {
-      ambilDataPembayaran();
-    }
+    idPemesanan && ambilDataPembayaran();
   }, [idPemesanan]);
 
   return {

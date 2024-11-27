@@ -15,7 +15,7 @@ const ModalKonfirmasiHapusPengajuan = ({
   terbuka,
   tertutup,
   pengajuanYangTerpilih,
-  konfirmasi, // Fungsi untuk mengonfirmasi penghapusan
+  konfirmasi,
   sedangMemuatHapusPengajuan,
 }) => {
   return (
