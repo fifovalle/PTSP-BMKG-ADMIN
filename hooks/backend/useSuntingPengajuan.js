@@ -56,8 +56,6 @@ export default function useSuntingPengajuan(idPemesanan) {
       ? (toast.error("Masukkan status pengajuan"), false)
       : !dataKeranjang || dataKeranjang.length === 0
       ? (toast.error("Data keranjang tidak boleh kosong"), false)
-      : nomorVAs.some((va) => !va)
-      ? (toast.error("Semua nomor VA harus diisi"), false)
       : true;
 
   const suntingPengajuan = async () => {

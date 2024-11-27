@@ -24,7 +24,8 @@ import { formatRupiah } from "@/constants/formatRupiah";
 
 const judulTabel = ["Pembeli", "NIK & Koresponden", "Tanggal Ajukan", ""];
 const judulTabel2 = ["Pembeli", "Bukti Pembayaran", ""];
-const judulTabel3 = [
+const judulTabel3 = ["Pembeli", "Surat Penerimaan", ""];
+const judulTabel4 = [
   "Pembeli",
   "Produk",
   "Nama Instansi",
@@ -47,15 +48,10 @@ const ModalLihatRiwayatTransaksi = ({
     (transaksi) => transaksi.id === riyawatTransaksiYangDipilih
   );
 
-  const tanganiUnduhPengajuan = () => {
-    unduhData(transaksiTerpilih.id);
-  };
-
   const filesToDownload = Array.isArray(transaksiTerpilih?.ajukan?.File_Ajukan)
     ? transaksiTerpilih.ajukan.File_Ajukan
     : [transaksiTerpilih?.ajukan?.File_Ajukan].filter(Boolean);
 
-  // PENGAJUAN
   const downloadZip = async () => {
     const zip = new JSZip();
 
@@ -98,7 +94,6 @@ const ModalLihatRiwayatTransaksi = ({
     });
   };
 
-  // BUKTI PEMBAYARAN
   const unduhSemuaBukti = async (buktiPembayaran = []) => {
     if (!buktiPembayaran || buktiPembayaran.length === 0) {
       alert("Tidak ada bukti pembayaran untuk diunduh.");
@@ -123,7 +118,55 @@ const ModalLihatRiwayatTransaksi = ({
     }
   };
 
-  // FAKTUR
+  const unduhSemuaPenerimaan = async (filePenerimaan) => {
+    const daftarFile = Array.isArray(filePenerimaan)
+      ? filePenerimaan
+      : filePenerimaan
+      ? [filePenerimaan]
+      : [];
+
+    if (daftarFile.length === 0) {
+      alert("Tidak ada file penerimaan untuk diunduh.");
+      return;
+    }
+
+    const zip = new JSZip();
+
+    try {
+      for (const [index, url] of daftarFile.entries()) {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          console.warn(`Gagal mengunduh file dari URL: ${url}`);
+          continue;
+        }
+
+        const blob = await response.blob();
+        const contentType = blob.type;
+
+        const ekstensi = (() => {
+          switch (contentType) {
+            case "application/pdf":
+              return "pdf";
+            case "application/msword":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+              return "docx";
+            default:
+              return "bin";
+          }
+        })();
+
+        const fileName = `file_penerimaan_${index + 1}.${ekstensi}`;
+        zip.file(fileName, blob);
+      }
+
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "file_penerimaan.zip");
+    } catch (error) {
+      console.error("Gagal mengunduh file penerimaan:", error);
+      alert("Terjadi kesalahan saat mengunduh file penerimaan.");
+    }
+  };
 
   const unduhFaktur = (dataKeranjang = []) => {
     if (!dataKeranjang || dataKeranjang.length === 0) {
@@ -134,7 +177,6 @@ const ModalLihatRiwayatTransaksi = ({
     const doc = new jsPDF();
     const tanggal = new Date().toLocaleDateString("id-ID");
 
-    // Tambahkan Judul
     doc.setFontSize(18);
     doc.text("Faktur Transaksi", 10, 10);
 
@@ -151,7 +193,6 @@ const ModalLihatRiwayatTransaksi = ({
       formatRupiah(item.Harga * item.Kuantitas),
     ]);
 
-    // Header Tabel
     const tableHeaders = [
       "No",
       "Nama Produk",
@@ -168,13 +209,6 @@ const ModalLihatRiwayatTransaksi = ({
     });
 
     doc.save(`faktur_transaksi_${tanggal.replace(/\//g, "-")}.pdf`);
-  };
-
-  const formatRupiah = (angka) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(angka);
   };
 
   return (
@@ -420,12 +454,111 @@ const ModalLihatRiwayatTransaksi = ({
           </tbody>
         </table>
 
-        <Typography className="text-black font-bold text-lg">Faktur</Typography>
+        <Typography className="text-black font-bold text-lg">
+          Surat Penerimaan
+        </Typography>
 
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr>
               {judulTabel3.map((konten) => (
+                <th
+                  key={konten}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                >
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                  >
+                    {konten}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {transaksiTerpilih ? (
+              <>
+                <tr>
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={transaksiTerpilih.pengguna?.Foto || gambarBawaan}
+                        alt={
+                          transaksiTerpilih.pengguna?.Nama_Lengkap ||
+                          "Tidak ada nama"
+                        }
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {transaksiTerpilih.pengguna?.Nama_Lengkap ||
+                            "Tidak ada nama"}
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal opacity-70"
+                        >
+                          {transaksiTerpilih.pengguna?.Email ||
+                            "Tidak ada email"}
+                        </Typography>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="p-4">
+                    {(Array.isArray(transaksiTerpilih.penerimaan?.File)
+                      ? transaksiTerpilih.penerimaan?.File
+                      : [transaksiTerpilih.penerimaan?.File || gambarBawaan]
+                    ).map((penerimaan, indeks) => (
+                      <div key={indeks} className="flex items-center gap-3">
+                        <embed src={penerimaan || gambarBawaan} />
+                      </div>
+                    ))}
+                  </td>
+
+                  <td className="p-4 text-end">
+                    <Tooltip content="Unduh File Penerimaan">
+                      <IconButton
+                        variant="outlined"
+                        color="green"
+                        onClick={() =>
+                          unduhSemuaPenerimaan(
+                            transaksiTerpilih.penerimaan?.File
+                          )
+                        }
+                      >
+                        <AiOutlineDownload className="h-4 w-4 text-green-800" />
+                      </IconButton>
+                    </Tooltip>
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <tr>
+                <td colSpan={judulTabel.length} className="text-center py-4">
+                  Tidak ada data pengajuan.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <Typography className="text-black font-bold text-lg">Faktur</Typography>
+
+        <table className="mt-4 w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {judulTabel4.map((konten) => (
                 <th
                   key={konten}
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"

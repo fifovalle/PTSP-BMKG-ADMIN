@@ -15,7 +15,6 @@ const useTampilkanAdminSesuaiID = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const idAdmin = localStorage.getItem("ID_Admin");
-      console.log("ID_Admin from localStorage:", idAdmin);
       if (!idAdmin) {
         pengarah.push("/");
         return;
@@ -28,7 +27,6 @@ const useTampilkanAdminSesuaiID = () => {
     const fetchAdminData = async () => {
       try {
         setMemuatTampilkanAdminSesuaiID(true);
-        console.log("Fetching admin data for ID:", id);
 
         if (!id) {
           throw new Error("ID Admin tidak ditemukan.");

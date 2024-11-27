@@ -71,6 +71,26 @@ const useTampilkanRiwayatTransaksi = (batasHalaman = 5) => {
             };
           }
 
+          for (const keranjangItem of pemesananData.Data_Keranjang || []) {
+            if (!keranjangItem?.ID_Penerimaan) continue;
+
+            const penerimaanRef = doc(
+              database,
+              "penerimaan",
+              keranjangItem.ID_Penerimaan
+            );
+            const penerimaanDoc = await getDoc(penerimaanRef);
+
+            if (penerimaanDoc.exists()) {
+              pemesananData.penerimaan = {
+                id: penerimaanDoc.id,
+                ...penerimaanDoc.data(),
+              };
+            }
+          }
+
+          console.log(pemesananData);
+
           if (pemesananData.ID_Transaksi) {
             try {
               const transaksiRef = doc(
