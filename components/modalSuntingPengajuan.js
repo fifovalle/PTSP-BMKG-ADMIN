@@ -26,6 +26,8 @@ const ModalSuntingPengajuan = ({
     dataKeranjang,
     nomorVAs,
     setNomorVAs,
+    keterangan,
+    setKeterangan,
     suntingPengajuan,
     statusPengajuan,
     setStatusPengajuan,
@@ -77,6 +79,20 @@ const ModalSuntingPengajuan = ({
             <Option value="Diterima">Diterima</Option>
             <Option value="Ditolak">Ditolak</Option>
           </Select>
+
+          {statusPengajuan === "Ditolak" && (
+            <div className="flex flex-col gap-4">
+              <Typography className="-mb-2" variant="h6">
+                keterangan
+              </Typography>
+              <Input
+                type="text"
+                label="Alasan Penolakan"
+                size="lg"
+                onChange={(e) => setKeterangan(e.target.value)}
+              />
+            </div>
+          )}
 
           {dataKeranjang
             .filter((item) => item.hasOwnProperty("Nomor_VA"))

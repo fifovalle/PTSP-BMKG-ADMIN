@@ -6,6 +6,7 @@ import { database } from "@/lib/firebaseConfig";
 
 export default function useSuntingPengajuan(idPemesanan) {
   const [statusPengajuan, setStatusPengajuan] = useState("");
+  const [keterangan, setKeterangan] = useState("");
   const [dataKeranjang, setDataKeranjang] = useState([]);
   const [nomorVAs, setNomorVAs] = useState([]);
   const [sedangMemuatSuntingPengajuan, setSedangMemuatSuntingPengajuan] =
@@ -33,13 +34,6 @@ export default function useSuntingPengajuan(idPemesanan) {
         if (pengajuanSnap.exists()) {
           const pengajuanData = pengajuanSnap.data();
           setStatusPengajuan(pengajuanData.Status_Ajuan || "");
-
-          if (pengajuanData.Jenis_Ajukan === "Gratis") {
-            await updateDoc(pemesananRef, {
-              Status_Pembayaran: "Lunas",
-              Total_Harga_Pesanan: 0,
-            });
-          }
         } else {
           toast.error("Data pengajuan tidak ditemukan!");
         }
@@ -54,6 +48,8 @@ export default function useSuntingPengajuan(idPemesanan) {
   const validasiFormulir = () =>
     !statusPengajuan
       ? (toast.error("Masukkan status pengajuan"), false)
+      : statusPengajuan === "Ditolak" && !keterangan
+      ? (toast.error("Masukkan keterangan untuk penolakan"), false)
       : !dataKeranjang || dataKeranjang.length === 0
       ? (toast.error("Data keranjang tidak boleh kosong"), false)
       : true;
@@ -67,9 +63,43 @@ export default function useSuntingPengajuan(idPemesanan) {
     }
 
     try {
+      const pemesananRef = doc(database, "pemesanan", idPemesanan);
+      const pemesananSnap = await getDoc(pemesananRef);
+      const pemesananData = pemesananSnap.exists()
+        ? pemesananSnap.data()
+        : null;
+
+      if (!pemesananData) {
+        throw new Error("Data pemesanan tidak ditemukan!");
+      }
+
       const pengajuanRef = doc(database, "ajukan", idAjukan);
-      await updateDoc(pengajuanRef, {
+      const pengajuanUpdateData = {
         Status_Ajuan: statusPengajuan,
+      };
+
+      if (statusPengajuan === "Ditolak") {
+        pengajuanUpdateData.Keterangan = keterangan;
+        pengajuanUpdateData.Status_Pembayaran = "Menunggu Pembayaran";
+      }
+
+      await updateDoc(pengajuanRef, pengajuanUpdateData);
+
+      const pengajuanData = await getDoc(pengajuanRef);
+      const pengajuanDocData = pengajuanData.data();
+
+      await updateDoc(pemesananRef, {
+        Status_Pembayaran:
+          pengajuanDocData.Jenis_Ajukan === "Gratis" &&
+          statusPengajuan === "Diterima"
+            ? "Lunas"
+            : pemesananData.Status_Pembayaran,
+        Total_Harga_Pesanan:
+          pengajuanDocData.Jenis_Ajukan === "Gratis" &&
+          statusPengajuan === "Diterima"
+            ? 0
+            : pemesananData.Total_Harga_Pesanan,
+        Data_Keranjang: dataKeranjang,
       });
 
       const updatedKeranjang = dataKeranjang.map((item, index) => {
@@ -79,8 +109,6 @@ export default function useSuntingPengajuan(idPemesanan) {
         }
         return itemBaru;
       });
-
-      const pemesananRef = doc(database, "pemesanan", idPemesanan);
 
       await updateDoc(pemesananRef, {
         Data_Keranjang: updatedKeranjang,
@@ -103,6 +131,8 @@ export default function useSuntingPengajuan(idPemesanan) {
   return {
     statusPengajuan,
     setStatusPengajuan,
+    keterangan,
+    setKeterangan,
     suntingPengajuan,
     sedangMemuatSuntingPengajuan,
     dataKeranjang,
