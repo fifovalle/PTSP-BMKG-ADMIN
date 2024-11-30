@@ -10,7 +10,7 @@ const useHapusIKM = () => {
   const hapusIKM = async (id) => {
     try {
       setSedangMemuatHapusIKM(true);
-      const referensiIKM = doc(database, "IKM", id);
+      const referensiIKM = doc(database, "ikm", id);
       await deleteDoc(referensiIKM);
       toast.success("IKM berhasil dihapus!");
     } catch (error) {
