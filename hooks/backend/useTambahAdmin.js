@@ -4,6 +4,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
 import { database, auth } from "@/lib/firebaseConfig";
+// Import DOMPurify untuk menghindari XSS
+import DOMPurify from "dompurify";
 
 const useTambahAdmin = () => {
   const [namaDepan, setNamaDepan] = useState("");
@@ -14,6 +16,11 @@ const useTambahAdmin = () => {
   const [instasi, setInstasi] = useState("");
   const [peranAdmin, setPeranAdmin] = useState("");
   const [sedangMemuatTambahAdmin, setSedangMemuatTambahAdmin] = useState(false);
+
+  // Fungsi untuk membersihkan input dari XSS
+  const bersihkanInput = (input) => {
+    return DOMPurify.sanitize(input);
+  };
 
   const validasiFormulir = () => {
     let sesuai = true;
@@ -56,23 +63,32 @@ const useTambahAdmin = () => {
     setSedangMemuatTambahAdmin(true);
 
     try {
+      // Bersihkan semua input dari XSS sebelum disimpan
+      const namaDepanBersih = bersihkanInput(namaDepan);
+      const namaBelakangBersih = bersihkanInput(namaBelakang);
+      const namaPenggunaBersih = bersihkanInput(namaPengguna);
+      const emailBersih = bersihkanInput(email);
+      const instasiBersih = bersihkanInput(instasi);
+      const jenisKelaminBersih = bersihkanInput(jenisKelamin);
+      const peranAdminBersih = bersihkanInput(peranAdmin);
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
+        emailBersih,
         "123456"
       );
       const user = userCredential.user;
 
       const referensiAdmin = collection(database, "admin");
       const dataAdmin = {
-        Nama_Depan: namaDepan,
-        Nama_Belakang: namaBelakang,
-        Nama_Pengguna: namaPengguna,
-        Email: email,
-        Jenis_Kelamin: jenisKelamin,
-        Instansi: instasi,
+        Nama_Depan: namaDepanBersih,
+        Nama_Belakang: namaBelakangBersih,
+        Nama_Pengguna: namaPenggunaBersih,
+        Email: emailBersih,
+        Jenis_Kelamin: jenisKelaminBersih,
+        Instansi: instasiBersih,
         Kata_Sandi: "123456",
-        Peran: peranAdmin,
+        Peran: peranAdminBersih,
         Tanggal_Pembuatan_Akun: serverTimestamp(),
         createdBy: auth.currentUser.uid,
       };
