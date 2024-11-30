@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
 const useTampilkanGrafikPartisipan = () => {
@@ -7,27 +7,38 @@ const useTampilkanGrafikPartisipan = () => {
   const [sedangMemuatGrafik, setSedangMemuatGrafik] = useState(true);
 
   useEffect(() => {
-    const ambilDataPartisipan = async () => {
-      setSedangMemuatGrafik(true);
-      try {
-        const koleksi = ["admin", "perorangan", "perusahaan"];
+    const koleksi = ["admin", "perorangan", "perusahaan"];
+    const unsubscribers = [];
 
-        const data = await Promise.all(
-          koleksi.map(async (namaKoleksi) => {
-            const snapshot = await getDocs(collection(database, namaKoleksi));
-            return snapshot.size;
-          })
+    setSedangMemuatGrafik(true);
+
+    try {
+      const dataAwal = new Array(koleksi.length).fill(0);
+      setDataPartisipan(dataAwal);
+
+      koleksi.forEach((namaKoleksi, index) => {
+        const unsubscribe = onSnapshot(
+          collection(database, namaKoleksi),
+          (snapshot) => {
+            setDataPartisipan((dataSebelumnya) => {
+              const dataBaru = [...dataSebelumnya];
+              dataBaru[index] = snapshot.size;
+              return dataBaru;
+            });
+          }
         );
 
-        setDataPartisipan(data);
-      } catch (error) {
-        console.error("Error fetching participant data:", error);
-      } finally {
-        setSedangMemuatGrafik(false);
-      }
-    };
+        unsubscribers.push(unsubscribe);
+      });
+    } catch (error) {
+      console.error("Error fetching participant data:", error);
+    } finally {
+      setSedangMemuatGrafik(false);
+    }
 
-    ambilDataPartisipan();
+    return () => {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    };
   }, []);
 
   return { dataPartisipan, sedangMemuatGrafik };

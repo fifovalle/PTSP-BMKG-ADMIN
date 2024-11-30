@@ -39,12 +39,14 @@ const useMasukDenganEmailKataSandi = () => {
         pengarah.push("/beranda");
       }
     } catch (error) {
-      if (error.code === "auth/invalid-credential") {
-        toast.error(
-          "Email Atau Kata Sandi Salah. Silakan periksa email dan kata sandi Anda."
-        );
+      if (error.code === "auth/user-not-found") {
+        toast.error("Email Salah. Silakan periksa email Anda.");
+      } else if (error.code === "auth/wrong-password") {
+        toast.error("Kata sandi salah. Silakan periksa kata sandi Anda.");
+      } else if (error.code === "auth/invalid-email") {
+        toast.error("Format email tidak valid.");
       } else {
-        toast.error("Terjadi kesalahan saat masuk. Silakan coba lagi.");
+        toast.error("Akun tidak ditemukan.");
       }
     } finally {
       setSedangMemuat(false);

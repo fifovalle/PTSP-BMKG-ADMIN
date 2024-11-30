@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { getAuth, signOut } from "firebase/auth"; // Firebase Auth for sign-out
+import { getAuth, signOut } from "firebase/auth";
 
 const useHapusAdmin = () => {
   const [sedangMemuatHapusAdmin, setSedangMemuatHapusAdmin] = useState(false);
-  const router = useRouter(); // For redirecting to the root page
+  const router = useRouter();
 
   const hapusAdmin = async (id) => {
     try {
       setSedangMemuatHapusAdmin(true);
       const auth = getAuth();
-      const penggunaSaatIni = auth.currentUser; // Get current logged-in user
+      const penggunaSaatIni = auth.currentUser;
 
       const response = await fetch("/api/hapus-admin", {
         method: "POST",

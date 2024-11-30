@@ -286,7 +286,10 @@ function Konten({ tahunDipilih }) {
             onClick={ambilHalamanSelanjutnya}
             variant="outlined"
             size="sm"
-            disabled={sedangMemuatTampilkanInformasi || halaman === 2}
+            disabled={
+              sedangMemuatTampilkanInformasi ||
+              halaman === Math.ceil(totalInformasi / 5)
+            }
           >
             Selanjutnya
           </Button>

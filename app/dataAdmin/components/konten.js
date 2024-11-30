@@ -258,7 +258,10 @@ const Konten = ({ tahunDipilih }) => {
             onClick={ambilAdminSelanjutnya}
             variant="outlined"
             size="sm"
-            disabled={sedangMemuatTampilkanAdmin || halaman === 2}
+            disabled={
+              sedangMemuatTampilkanAdmin ||
+              halaman === Math.ceil(totalAdmin / 5)
+            }
           >
             Selanjutnya
           </Button>
