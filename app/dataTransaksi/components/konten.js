@@ -27,6 +27,7 @@ const judulTabel = [
   "Produk",
   "Kuantitas & Total",
   "Status",
+  "Jenis",
   "Tanggal Pengisian Transaksi",
   "",
 ];
@@ -258,6 +259,22 @@ function Konten({ tahunDipilih }) {
                                 ? "red"
                                 : ajukan.Status_Ajuan === "Sedang Ditinjau"
                                 ? "yellow"
+                                : "default"
+                            }
+                          />
+                        </div>
+                      </td>
+                      <td className={kelas}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={ajukan.Jenis_Ajukan || "Belum ada Jenis"}
+                            color={
+                              ajukan.Jenis_Ajukan === "Gratis"
+                                ? "green"
+                                : ajukan.Jenis_Ajukan === "Berbayar"
+                                ? "red"
                                 : "default"
                             }
                           />

@@ -3,6 +3,7 @@ import { collection, doc, getDocs, getDoc } from "firebase/firestore";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { toast } from "react-toastify";
 import { database } from "@/lib/firebaseConfig";
+import { formatTanggal } from "@/constants/formatTanggal";
 
 const useKonversiDataIKMKePdf = () => {
   const [dataIKM, setDataIKM] = useState([]);
@@ -149,179 +150,188 @@ const useKonversiDataIKMKePdf = () => {
     const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
     const fontSize = 10;
 
-    for (const item of dataIKM) {
-      let page = pdfDoc.addPage([600, 800]);
-      let yPos = 750;
+    const dataValidIKM =
+      dataIKM.find((item) => item.ikm?.ikmResponses?.length > 0) || dataIKM[0];
 
-      const text = "Laporan Data IKM";
-      const textWidth = font.widthOfTextAtSize(text, 20);
-      const pageWidth = 600;
-      const xPos = (pageWidth - textWidth) / 2;
+    let page = pdfDoc.addPage([600, 800]);
+    let yPos = 750;
 
-      page.drawText(text, {
-        x: xPos,
-        y: yPos,
-        size: 20,
-        font: fontBold,
-        color: rgb(0.1, 0.1, 0.8),
-      });
-      yPos -= 40;
+    const text = "Laporan Data IKM";
+    const textWidth = font.widthOfTextAtSize(text, 20);
+    const pageWidth = 600;
+    const xPos = (pageWidth - textWidth) / 2;
 
-      page.drawText(`Nama Pengguna: ${item.pengguna?.Nama_Lengkap || ""}`, {
+    page.drawText(text, {
+      x: xPos,
+      y: yPos,
+      size: 20,
+      font: fontBold,
+      color: rgb(0.1, 0.1, 0.8),
+    });
+    yPos -= 40;
+
+    page.drawText(
+      `Tanggal Pemesanan: ${
+        formatTanggal(dataValidIKM.Tanggal_Pemesanan) || ""
+      }`,
+      {
         x: 10,
         y: yPos,
         size: 12,
         font,
-      });
-      yPos -= 20;
-
-      page.drawText(`Email: ${item.pengguna?.Email || ""}`, {
-        x: 10,
-        y: yPos,
-        size: 12,
-        font,
-      });
-      yPos -= 20;
-
-      page.drawText(`NIK: ${item.pengguna?.No_Identitas || ""}`, {
-        x: 10,
-        y: yPos,
-        size: 12,
-        font,
-      });
-      yPos -= 20;
-
-      page.drawText(`Koresponden: ${item.ajukan?.Nama_Ajukan || ""}`, {
-        x: 10,
-        y: yPos,
-        size: 12,
-        font,
-      });
-      yPos -= 40;
-
-      if (item.ikm?.ikmResponses?.length > 0) {
-        const tableStartY = yPos;
-        const headerHeight = 22;
-        const cellHeight = 26;
-        const cellPadding = 5;
-
-        const headers = [
-          "No",
-          "Pertanyaan",
-          "Kualitas Layanan",
-          "Harapan Konsumen",
-        ];
-        const columnWidths = [30, 350, 100, 100];
-
-        let x = 10;
-        headers.forEach((header, index) => {
-          page.drawRectangle({
-            x,
-            y: tableStartY,
-            width: columnWidths[index],
-            height: headerHeight,
-            borderWidth: 0.5,
-            borderColor: rgb(0, 0, 0),
-            color: rgb(0.8, 0.8, 0.8),
-          });
-          page.drawText(header, {
-            x: x + cellPadding,
-            y: tableStartY + 10,
-            size: fontSize,
-            font: fontBold,
-            color: rgb(0, 0, 0),
-            x:
-              x +
-              (columnWidths[index] - font.widthOfTextAtSize(header, fontSize)) /
-                2,
-          });
-          x += columnWidths[index];
-        });
-
-        yPos = tableStartY - headerHeight;
-
-        item.ikm.ikmResponses.forEach((response, index) => {
-          let x = 10;
-          const rowData = [
-            `${index + 1}`,
-            response.NamaPertanyaan || "-",
-            response.KualitasLayanan || "-",
-            response.HarapanKonsumen || "-",
-          ];
-
-          const pertanyaanLines = splitTextIntoLines(
-            rowData[1],
-            columnWidths[1] - 2 * cellPadding,
-            font,
-            fontSize
-          );
-
-          const dynamicRowHeight = Math.max(
-            cellHeight,
-            pertanyaanLines.length * (fontSize + 2)
-          );
-
-          rowData.forEach((data, colIndex) => {
-            page.drawRectangle({
-              x,
-              y: yPos,
-              width: columnWidths[colIndex],
-              height: dynamicRowHeight,
-              borderWidth: 0.5,
-              borderColor: rgb(0, 0, 0),
-              color: rgb(1, 1, 1),
-            });
-
-            if (colIndex === 1) {
-              pertanyaanLines.forEach((line, lineIndex) => {
-                page.drawText(line, {
-                  x: x + cellPadding,
-                  y: yPos + dynamicRowHeight - (lineIndex + 1) * (fontSize + 2),
-                  size: fontSize,
-                  font,
-                  color: rgb(0, 0, 0),
-                });
-              });
-            } else if (colIndex === 2 || colIndex === 3) {
-              const textWidth = font.widthOfTextAtSize(data, fontSize);
-              page.drawText(data, {
-                x: x + (columnWidths[colIndex] - textWidth) / 2,
-                y: yPos + 15,
-                size: fontSize,
-                font,
-                color: rgb(0, 0, 0),
-              });
-            } else {
-              page.drawText(data, {
-                x: x + cellPadding,
-                y: yPos + 15,
-                size: fontSize,
-                font,
-                color: rgb(0, 0, 0),
-              });
-            }
-
-            x += columnWidths[colIndex];
-          });
-
-          yPos -= dynamicRowHeight;
-
-          if (yPos < 50) {
-            page = pdfDoc.addPage([600, 800]);
-            yPos = 750;
-          }
-        });
-      } else {
-        page.drawText("Tidak ada data IKM untuk pengguna ini.", {
-          x: 10,
-          y: yPos,
-          size: 12,
-          font,
-          color: rgb(0.8, 0.1, 0.1),
-        });
       }
+    );
+    yPos -= 20;
+
+    page.drawText(`Koresponden: ${dataValidIKM.ajukan?.Nama_Ajukan || ""}`, {
+      x: 10,
+      y: yPos,
+      size: 12,
+      font,
+    });
+    yPos -= 20;
+
+    page.drawText(
+      `Nama Pengguna: ${dataValidIKM.pengguna?.Nama_Lengkap || ""}`,
+      {
+        x: 10,
+        y: yPos,
+        size: 12,
+        font,
+      }
+    );
+    yPos -= 20;
+
+    if (dataValidIKM.Data_Keranjang && dataValidIKM.Data_Keranjang.length > 0) {
+      dataValidIKM.Data_Keranjang.forEach((produk, index) => {
+        page.drawText(
+          `Nama Produk ${index + 1}: ${
+            produk?.Nama || "Tidak ada nama produk"
+          }`,
+          {
+            x: 10,
+            y: yPos,
+            size: 12,
+            font,
+          }
+        );
+        yPos -= 20;
+      });
     }
 
+    page.drawText(`Email: ${dataValidIKM.pengguna?.Email || ""}`, {
+      x: 10,
+      y: yPos,
+      size: 12,
+      font,
+    });
+    yPos -= 50;
+
+    if (dataValidIKM.ikm?.ikmResponses?.length > 0) {
+      const tableStartY = yPos;
+      const headerHeight = 22;
+      const cellHeight = 26;
+      const cellPadding = 5;
+
+      const headers = [
+        "No",
+        "Pertanyaan",
+        "Kualitas Layanan",
+        "Harapan Konsumen",
+      ];
+      const columnWidths = [30, 350, 100, 100];
+
+      let x = 10;
+      headers.forEach((header, index) => {
+        page.drawRectangle({
+          x,
+          y: tableStartY,
+          width: columnWidths[index],
+          height: headerHeight,
+          borderWidth: 0.5,
+          borderColor: rgb(0, 0, 0),
+          color: rgb(0.8, 0.8, 0.8),
+        });
+        page.drawText(header, {
+          x: x + cellPadding,
+          y: tableStartY + 10,
+          size: fontSize,
+          font: fontBold,
+          color: rgb(0, 0, 0),
+        });
+        x += columnWidths[index];
+      });
+
+      yPos = tableStartY - headerHeight;
+
+      dataValidIKM.ikm.ikmResponses.forEach((response, index) => {
+        let x = 10;
+        const rowData = [
+          `${index + 1}`,
+          response.NamaPertanyaan || "-",
+          response.KualitasLayanan || "-",
+          response.HarapanKonsumen || "-",
+        ];
+
+        const pertanyaanLines = splitTextIntoLines(
+          rowData[1],
+          columnWidths[1] - 2 * cellPadding,
+          font,
+          fontSize
+        );
+
+        const dynamicRowHeight = Math.max(
+          cellHeight,
+          pertanyaanLines.length * (fontSize + 2)
+        );
+
+        rowData.forEach((data, colIndex) => {
+          page.drawRectangle({
+            x,
+            y: yPos,
+            width: columnWidths[colIndex],
+            height: dynamicRowHeight,
+            borderWidth: 0.5,
+            borderColor: rgb(0, 0, 0),
+            color: rgb(1, 1, 1),
+          });
+
+          if (colIndex === 1) {
+            pertanyaanLines.forEach((line, lineIndex) => {
+              page.drawText(line, {
+                x: x + cellPadding,
+                y: yPos + dynamicRowHeight - (lineIndex + 1) * (fontSize + 2),
+                size: fontSize,
+                font,
+                color: rgb(0, 0, 0),
+              });
+            });
+          } else {
+            page.drawText(data, {
+              x: x + cellPadding,
+              y: yPos + 15,
+              size: fontSize,
+              font,
+              color: rgb(0, 0, 0),
+            });
+          }
+
+          x += columnWidths[colIndex];
+        });
+
+        yPos -= dynamicRowHeight;
+      });
+    } else {
+      page.drawText("Tidak ada data IKM untuk pengguna ini.", {
+        x: 10,
+        y: yPos,
+        size: 12,
+        font,
+        color: rgb(0.8, 0.1, 0.1),
+      });
+    }
+
+    // Unduh PDF
     const namaFile = `IKM_Data.pdf`;
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });

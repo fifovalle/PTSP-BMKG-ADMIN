@@ -18,18 +18,15 @@ import {
 // PENGAIT KAMI
 import useKonversiDataIKMKePdf from "@/hooks/backend/useKonversiDataIKMKePdf";
 import useTampilkanDataIKM from "@/hooks/backend/useTampilkanDataIKM";
-import useHapusIKM from "@/hooks/backend/useHapusDataIKM";
 import useTampilkanDataPerTahun from "@/hooks/backend/useTampilkanDataPerTahun";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 // KOMPONEN KAMI
 import Memuat from "@/components/memuat";
 import ModalLihatIKM from "@/components/modalLihatIKM";
-import ModalKonfirmasiHapusIKM from "@/components/modalKonfirmasiHapusIKM";
 
 const judulTabel = [
   "Pembeli",
-  "NIK & Koresponden",
   "Jenis Layanan",
   "Tanggal Pengisian IKM",
   "Aksi",
@@ -50,19 +47,6 @@ function Konten({ tahunDipilih }) {
     sedangMemuatIkm,
   } = useTampilkanDataIKM();
   const { unduhPdf } = useKonversiDataIKMKePdf();
-  const { hapusIKM } = useHapusIKM();
-  const [sedangMemuatHapusIKM, setSedangMemuatHapusIKM] = useState(false);
-
-  const konfirmasiHapusIKM = () => {
-    setSedangMemuatHapusIKM(true);
-    hapusIKM(ikmYangTerpilih)
-      .then(() => {
-        setBukaModalHapusIKM(false);
-      })
-      .finally(() => {
-        setSedangMemuatHapusIKM(false);
-      });
-  };
 
   const saringIkm = daftarIkm.filter((item) => {
     const tanggal =
@@ -165,18 +149,6 @@ function Konten({ tahunDipilih }) {
                       </td>
 
                       <td className={kelas}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {pengguna.NPWP}
-                          </Typography>
-                        </div>
-                      </td>
-
-                      <td className={kelas}>
                         {Data_Keranjang && Data_Keranjang.length > 0 ? (
                           Data_Keranjang.map((dataKeranjang, idx) => (
                             <div key={idx} className="flex flex-col mb-2">
@@ -238,22 +210,6 @@ function Konten({ tahunDipilih }) {
                             <EyeIcon className="h-4 w-4" />
                           </IconButton>
                         </Tooltip>
-
-                        <Tooltip content="Hapus IKM">
-                          <IconButton
-                            variant="text"
-                            onClick={() => {
-                              setIkmYangTerpilih(id);
-                              setBukaModalHapusIKM(true);
-                            }}
-                          >
-                            {sedangMemuatHapusIKM ? (
-                              <Memuat />
-                            ) : (
-                              <TrashIcon className="h-4 w-4" />
-                            )}
-                          </IconButton>
-                        </Tooltip>
                       </td>
                     </tr>
                   );
@@ -287,13 +243,6 @@ function Konten({ tahunDipilih }) {
         </div>
       </CardFooter>
 
-      <ModalKonfirmasiHapusIKM
-        terbuka={bukaModalHapusIKM}
-        tutupModal={setBukaModalHapusIKM}
-        ikmYangTerpilih={ikmYangTerpilih}
-        konfirmasiHapusIKM={konfirmasiHapusIKM}
-        sedangMemuatHapusIKM={sedangMemuatHapusIKM}
-      />
       <ModalLihatIKM
         terbuka={bukaModalLihatIKM}
         tertutup={setBukaModalLihatIKM}

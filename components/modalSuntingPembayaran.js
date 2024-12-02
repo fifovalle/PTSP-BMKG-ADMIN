@@ -25,6 +25,8 @@ const ModalSuntingPembayaran = ({
   const {
     statusPembayaran,
     setStatusPembayaran,
+    keterangan,
+    setKeterangan,
     suntingPembayaran,
     sedangMemuatSuntingPembayaran,
   } = useSuntingPembayaran(pembayaranYangTerpilih);
@@ -62,12 +64,32 @@ const ModalSuntingPembayaran = ({
             label="Pilih Status Pembayaran"
             size="lg"
             value={statusPembayaran}
-            onChange={(value) => setStatusPembayaran(value)}
+            onChange={(value) => {
+              setStatusPembayaran(value);
+              if (value !== "Ditolak") {
+                setKeterangan(""); // Reset keterangan jika status bukan "Ditolak"
+              }
+            }}
           >
             <Option value="Sedang Ditinjau">Sedang Ditinjau</Option>
             <Option value="Lunas">Lunas</Option>
             <Option value="Ditolak">Ditolak</Option>
           </Select>
+
+          {statusPembayaran === "Ditolak" && (
+            <>
+              <Typography className="-mb-2 mt-4" variant="h6">
+                Keterangan
+              </Typography>
+              <Input
+                type="text"
+                size="lg"
+                value={keterangan}
+                onChange={(e) => setKeterangan(e.target.value)}
+                placeholder="Masukkan keterangan untuk penolakan"
+              />
+            </>
+          )}
         </form>
       </DialogBody>
       <DialogFooter>

@@ -44,70 +44,72 @@ const ModalSuntingPembuatan = ({ terbuka, tertutup, pembuatanYangDipilih }) => {
       size="sm"
       className="bg-white max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-4"
     >
-      <div className="absolute top-3 right-3">
-        <IconButton
-          variant="text"
-          color="red"
-          onClick={() => tertutup(false)}
-          className="text-red-500 hover:bg-transparent"
-        >
-          <XMarkIcon className="h-6 w-6" />
-        </IconButton>
-      </div>
+      <div className="overflow-scroll h-screen">
+        <div className="absolute top-3 right-3">
+          <IconButton
+            variant="text"
+            color="red"
+            onClick={() => tertutup(false)}
+            className="text-red-500 hover:bg-transparent"
+          >
+            <XMarkIcon className="h-6 w-6" />
+          </IconButton>
+        </div>
 
-      <DialogHeader className="text-black">Sunting Pembuatan</DialogHeader>
+        <DialogHeader className="text-black">Sunting Pembuatan</DialogHeader>
 
-      <DialogBody divider>
-        <form className="flex flex-col gap-4">
-          <div className="w-full mt-2">
-            <Typography className="mb-2" variant="h6">
-              Nomor Surat
-            </Typography>
-            <Input
-              value={nomorSurat}
-              onChange={(e) => setNomorSurat(e.target.value)}
-              label="Nomor Surat"
-              type="text"
-              size="lg"
-            />
-          </div>
-
-          {dataKeranjang.map((keranjang, indeks) => (
-            <div key={indeks} className="keranjang-item mb-4">
-              <div className="w-full mt-2">
-                <Typography className="mb-2" variant="h6">
-                  Berkas Untuk {keranjang.Nama}
-                </Typography>
-                <Input
-                  type="file"
-                  size="lg"
-                  onChange={(e) => handleFileChange(e, indeks)}
-                  className="file-input"
-                />
-              </div>
+        <DialogBody divider>
+          <form className="flex flex-col gap-4">
+            <div className="w-full mt-2">
+              <Typography className="mb-2" variant="h6">
+                Nomor Surat
+              </Typography>
+              <Input
+                value={nomorSurat}
+                onChange={(e) => setNomorSurat(e.target.value)}
+                label="Nomor Surat"
+                type="text"
+                size="lg"
+              />
             </div>
-          ))}
-        </form>
-      </DialogBody>
 
-      <DialogFooter>
-        <Button
-          onClick={async () => {
-            await kirim();
-            tertutup(false);
-          }}
-          variant="gradient"
-          color="black"
-          disabled={sedangMemuatKirimFile}
-          className={`${
-            sedangMemuatKirimFile
-              ? "opacity-50 cursor-not-allowed"
-              : "opacity-100"
-          }`}
-        >
-          {sedangMemuatKirimFile ? <Memuat /> : "Kirim Berkas"}
-        </Button>
-      </DialogFooter>
+            {dataKeranjang.map((keranjang, indeks) => (
+              <div key={indeks} className="keranjang-item mb-4">
+                <div className="w-full mt-2">
+                  <Typography className="mb-2" variant="h6">
+                    Berkas Untuk {keranjang.Nama}
+                  </Typography>
+                  <Input
+                    type="file"
+                    size="lg"
+                    onChange={(e) => handleFileChange(e, indeks)}
+                    className="file-input"
+                  />
+                </div>
+              </div>
+            ))}
+          </form>
+        </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={async () => {
+              await kirim();
+              tertutup(false);
+            }}
+            variant="gradient"
+            color="black"
+            disabled={sedangMemuatKirimFile}
+            className={`${
+              sedangMemuatKirimFile
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100"
+            }`}
+          >
+            {sedangMemuatKirimFile ? <Memuat /> : "Kirim Berkas"}
+          </Button>
+        </DialogFooter>
+      </div>
     </Dialog>
   );
 };

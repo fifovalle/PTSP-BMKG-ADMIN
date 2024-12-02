@@ -6,29 +6,41 @@ import { database } from "@/lib/firebaseConfig";
 
 export default function useSuntingPembayaran(idPemesanan) {
   const [statusPembayaran, setStatusPembayaran] = useState("");
+  const [keterangan, setKeterangan] = useState("");
   const [sedangMemuatSuntingPembayaran, setSedangMemuatSuntingPembayaran] =
     useState(false);
-
-  console.log(idPemesanan);
 
   const ambilDataPembayaran = async () => {
     try {
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
       const docSnap = await getDoc(pemesananRef);
 
-      docSnap.exists()
-        ? setStatusPembayaran(docSnap.data().Status_Pembayaran || "")
-        : toast.error("Data pemesanan tidak ditemukan.");
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setStatusPembayaran(data.Status_Pembayaran || "");
+        setKeterangan(data.Keterangan || "");
+      } else {
+        toast.error("Data pemesanan tidak ditemukan.");
+      }
     } catch (error) {
       console.error("Gagal mengambil data pembayaran:", error);
       toast.error("Terjadi kesalahan saat mengambil data pembayaran.");
     }
   };
 
-  const validasiFormulir = () =>
-    !statusPembayaran
-      ? (toast.error("Masukkan status pembayaran"), false)
-      : true;
+  const validasiFormulir = () => {
+    if (!statusPembayaran) {
+      toast.error("Masukkan status pembayaran.");
+      return false;
+    }
+
+    if (statusPembayaran === "Ditolak" && !keterangan.trim()) {
+      toast.error("Masukkan keterangan untuk penolakan.");
+      return false;
+    }
+
+    return true;
+  };
 
   const suntingPembayaran = async () => {
     setSedangMemuatSuntingPembayaran(true);
@@ -40,9 +52,12 @@ export default function useSuntingPembayaran(idPemesanan) {
 
     try {
       const pemesananRef = doc(database, "pemesanan", idPemesanan);
-      await updateDoc(pemesananRef, {
+      const updateData = {
         Status_Pembayaran: statusPembayaran,
-      });
+        Keterangan: statusPembayaran === "Ditolak" ? keterangan.trim() : "",
+      };
+
+      await updateDoc(pemesananRef, updateData);
       toast.success("Status pembayaran berhasil diperbarui.");
     } catch (error) {
       console.error("Gagal memperbarui status pembayaran:", error);
@@ -53,12 +68,16 @@ export default function useSuntingPembayaran(idPemesanan) {
   };
 
   useEffect(() => {
-    idPemesanan && ambilDataPembayaran();
+    if (idPemesanan) {
+      ambilDataPembayaran();
+    }
   }, [idPemesanan]);
 
   return {
     statusPembayaran,
     setStatusPembayaran,
+    keterangan,
+    setKeterangan,
     suntingPembayaran,
     sedangMemuatSuntingPembayaran,
   };

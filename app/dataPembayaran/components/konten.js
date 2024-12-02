@@ -29,6 +29,7 @@ function Konten({ tahunDipilih }) {
   const [bukaModalLihatPembayaran, setBukaModalLihatPembayaran] =
     useState(false);
   const [pembuatanTerpilih, setPembuatanTerpilih] = useState(null);
+  const [keteranganTerpilih, setKeteranganTerpilih] = useState("");
   const dataBulanTahun = useTampilkanDataPerTahun();
   const {
     sedangMemuatPemesanan,
@@ -103,77 +104,81 @@ function Konten({ tahunDipilih }) {
                   (pemesanan) =>
                     pemesanan.Status_Pembayaran === "Sedang Ditinjau"
                 )
-                .map(({ id, pengguna, Tanggal_Pemesanan }, index) => {
-                  const apakahTerakhir = index === saringPemesanan.length - 1;
-                  const kelas = apakahTerakhir
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
+                .map(
+                  ({ id, pengguna, Tanggal_Pemesanan, Keterangan }, index) => {
+                    const apakahTerakhir = index === saringPemesanan.length - 1;
+                    const kelas = apakahTerakhir
+                      ? "p-4"
+                      : "p-4 border-b border-blue-gray-50";
 
-                  return (
-                    <tr key={id}>
-                      <td className={kelas}>
-                        <div className="flex items-center gap-3">
-                          <Image
-                            src={pengguna.Foto || gambarBawaan}
-                            alt={pengguna.Nama_Lengkap}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                          />
-                          <div className="flex flex-col">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal"
-                            >
-                              {pengguna.Nama_Lengkap}
-                            </Typography>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal opacity-70"
-                            >
-                              {pengguna.Email}
-                            </Typography>
+                    return (
+                      <tr key={id}>
+                        <td className={kelas}>
+                          <div className="flex items-center gap-3">
+                            <Image
+                              src={pengguna.Foto || gambarBawaan}
+                              alt={pengguna.Nama_Lengkap}
+                              width={40}
+                              height={40}
+                              className="rounded-full"
+                            />
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {pengguna.Nama_Lengkap}
+                              </Typography>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal opacity-70"
+                              >
+                                {pengguna.Email}
+                              </Typography>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className={kelas}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {formatTanggal(Tanggal_Pemesanan)}
-                        </Typography>
-                      </td>
-                      <td className={kelas}>
-                        <Tooltip content="Lihat Selengkapnya">
-                          <IconButton
-                            onClick={() => {
-                              setPembuatanTerpilih(id);
-                              setBukaModalLihatPembayaran(true);
-                            }}
-                            variant="text"
+                        </td>
+                        <td className={kelas}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
                           >
-                            <AiFillEye className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip content="Sunting">
-                          <IconButton
-                            onClick={() => {
-                              setPembuatanTerpilih(id);
-                              setBukaModalSuntingPembayaran(true);
-                            }}
-                            variant="text"
-                          >
-                            <AiOutlineUpload className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                })
+                            {formatTanggal(Tanggal_Pemesanan)}
+                          </Typography>
+                        </td>
+                        <td className={kelas}>
+                          <Tooltip content="Lihat Selengkapnya">
+                            <IconButton
+                              onClick={() => {
+                                setPembuatanTerpilih(id);
+                                setKeteranganTerpilih(Keterangan || "");
+                                setBukaModalLihatPembayaran(true);
+                              }}
+                              variant="text"
+                            >
+                              <AiFillEye className="h-4 w-4" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip content="Sunting">
+                            <IconButton
+                              onClick={() => {
+                                setPembuatanTerpilih(id);
+                                setKeteranganTerpilih(Keterangan || "");
+                                setBukaModalSuntingPembayaran(true);
+                              }}
+                              variant="text"
+                            >
+                              <AiOutlineUpload className="h-4 w-4" />
+                            </IconButton>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center text-gray-500">
@@ -215,12 +220,14 @@ function Konten({ tahunDipilih }) {
         terbuka={bukaModalSuntingPembayaran}
         tertutup={setBukaModalSuntingPembayaran}
         pembayaranYangTerpilih={pembuatanTerpilih}
+        keterangan={keteranganTerpilih}
       />
 
       <ModalLihatPembayaran
         terbuka={bukaModalLihatPembayaran}
         tertutup={setBukaModalLihatPembayaran}
         pembayaranYangTerpilih={pembuatanTerpilih}
+        keterangan={keteranganTerpilih}
       />
     </Card>
   );
