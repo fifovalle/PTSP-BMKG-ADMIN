@@ -145,18 +145,33 @@ const useKonversiDataIKMKePdf = () => {
 
   const unduhPdf = async () => {
     const pdfDoc = await PDFDocument.create();
-
     const font = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
     const fontSize = 10;
 
+    const imageBytes = await fetch("/ikm.jpg").then((res) => res.arrayBuffer());
+    const image = await pdfDoc.embedJpg(imageBytes);
+
     const dataValidIKM =
       dataIKM.find((item) => item.ikm?.ikmResponses?.length > 0) || dataIKM[0];
 
-    let page = pdfDoc.addPage([600, 800]);
+    let page = pdfDoc.addPage([600, 850]);
     let yPos = 750;
 
-    const text = "Laporan Data IKM";
+    const imageWidth = 550;
+    const imageHeight = 110;
+    const offsetY = 100;
+    page.drawImage(image, {
+      x: 25,
+      y: yPos - imageHeight + offsetY,
+      width: imageWidth,
+      height: imageHeight,
+    });
+
+    const gapBetweenImageAndText = -70;
+    yPos -= imageHeight + gapBetweenImageAndText;
+
+    const text = "LAPORAN DATA IKM";
     const textWidth = font.widthOfTextAtSize(text, 20);
     const pageWidth = 600;
     const xPos = (pageWidth - textWidth) / 2;
@@ -164,9 +179,9 @@ const useKonversiDataIKMKePdf = () => {
     page.drawText(text, {
       x: xPos,
       y: yPos,
-      size: 20,
+      size: 15,
       font: fontBold,
-      color: rgb(0.1, 0.1, 0.8),
+      color: rgb(0, 0, 0),
     });
     yPos -= 40;
 
@@ -175,7 +190,7 @@ const useKonversiDataIKMKePdf = () => {
         formatTanggal(dataValidIKM.Tanggal_Pemesanan) || ""
       }`,
       {
-        x: 10,
+        x: 20,
         y: yPos,
         size: 12,
         font,
@@ -184,7 +199,7 @@ const useKonversiDataIKMKePdf = () => {
     yPos -= 20;
 
     page.drawText(`Koresponden: ${dataValidIKM.ajukan?.Nama_Ajukan || ""}`, {
-      x: 10,
+      x: 20,
       y: yPos,
       size: 12,
       font,
@@ -194,12 +209,20 @@ const useKonversiDataIKMKePdf = () => {
     page.drawText(
       `Nama Pengguna: ${dataValidIKM.pengguna?.Nama_Lengkap || ""}`,
       {
-        x: 10,
+        x: 20,
         y: yPos,
         size: 12,
         font,
       }
     );
+    yPos -= 20;
+
+    page.drawText(`Email: ${dataValidIKM.pengguna?.Email || ""}`, {
+      x: 20,
+      y: yPos,
+      size: 12,
+      font,
+    });
     yPos -= 20;
 
     if (dataValidIKM.Data_Keranjang && dataValidIKM.Data_Keranjang.length > 0) {
@@ -209,7 +232,7 @@ const useKonversiDataIKMKePdf = () => {
             produk?.Nama || "Tidak ada nama produk"
           }`,
           {
-            x: 10,
+            x: 20,
             y: yPos,
             size: 12,
             font,
@@ -219,13 +242,13 @@ const useKonversiDataIKMKePdf = () => {
       });
     }
 
-    page.drawText(`Email: ${dataValidIKM.pengguna?.Email || ""}`, {
-      x: 10,
+    page.drawText(``, {
+      x: 20,
       y: yPos,
       size: 12,
       font,
     });
-    yPos -= 50;
+    yPos -= 20;
 
     if (dataValidIKM.ikm?.ikmResponses?.length > 0) {
       const tableStartY = yPos;
@@ -331,7 +354,6 @@ const useKonversiDataIKMKePdf = () => {
       });
     }
 
-    // Unduh PDF
     const namaFile = `IKM_Data.pdf`;
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
@@ -339,8 +361,6 @@ const useKonversiDataIKMKePdf = () => {
     link.href = URL.createObjectURL(blob);
     link.download = namaFile;
     link.click();
-
-    toast.success("PDF berhasil diunduh!");
   };
 
   return { dataIKM, unduhPdf, sedangMemuatIkm };

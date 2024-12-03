@@ -12,6 +12,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { AiOutlineDownload } from "react-icons/ai";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { PDFDocument } from "pdf-lib";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { getDownloadURL, ref } from "firebase/storage";
@@ -168,41 +169,79 @@ const ModalLihatRiwayatTransaksi = ({
     }
   };
 
-  const unduhFaktur = (dataKeranjang = [], pemesanan, userData) => {
+  const unduhFaktur = async (dataKeranjang = [], pemesanan, userData) => {
     if (!dataKeranjang || dataKeranjang.length === 0) {
       alert("Tidak ada data faktur untuk diunduh.");
       return;
     }
 
     const doc = new jsPDF();
-    const tanggal = new Date().toLocaleDateString("id-ID");
 
-    doc.setFontSize(26);
-    doc.setTextColor(41, 128, 185);
-    doc.text("FAKTUR PEMBAYARAN", 105, 20, { align: "center" });
+    const imageUrl = "/faktur.jpg";
+    const imageWidth = 840;
+    const imageHeight = 150;
+    const offsetX = 0;
+    const offsetY = 0;
+
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const base64data = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+
+    doc.addImage(
+      base64data,
+      "JPEG",
+      offsetX,
+      offsetY,
+      imageWidth / 4,
+      imageHeight / 4
+    );
+
+    const imageEndY = offsetY + imageHeight / 4;
+
+    const gap = 2;
+    const lineY = imageEndY + gap;
 
     doc.setLineWidth(0.5);
-    doc.line(14, 30, 196, 30);
+
+    const tanggal = new Date().toLocaleDateString("id-ID");
+
+    const textStartY = lineY + 10;
+    doc.setLineWidth(0.5);
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text(`Nomor Invoice: ${pemesanan.id}`, 14, 40);
-    doc.text(`Tanggal: ${tanggal}`, 14, 46);
+    doc.text(`Nomor Invoice: ${pemesanan.id}`, 14, textStartY);
+    doc.text(`Tanggal: ${tanggal}`, 14, textStartY + 6);
     doc.text(
       `Status Pembayaran: ${pemesanan.Status_Pembayaran || "Belum Dibayar"}`,
       14,
-      52
+      textStartY + 12
     );
 
-    doc.setFontSize(12);
-    doc.text("Detail Pelanggan:", 14, 60);
+    doc.text("Detail Pelanggan:", 14, textStartY + 22);
     doc.setFont("helvetica", "italic");
-    doc.text(`Nama: ${userData.Nama_Lengkap || "Tidak diketahui"}`, 14, 66);
-    doc.text(`Email: ${userData.Email || "Tidak diketahui"}`, 14, 72);
-    doc.text(`Alamat: ${userData.Alamat || "Tidak tersedia"}`, 14, 78);
+    doc.text(
+      `Nama: ${userData.Nama_Lengkap || "Tidak diketahui"}`,
+      14,
+      textStartY + 28
+    );
+    doc.text(
+      `Email: ${userData.Email || "Tidak diketahui"}`,
+      14,
+      textStartY + 34
+    );
+    doc.text(
+      `Alamat: ${userData.Alamat || "Tidak tersedia"}`,
+      14,
+      textStartY + 40
+    );
     doc.setFont("helvetica", "normal");
 
-    doc.line(14, 84, 196, 84);
+    const gapBeforeTable = 10;
 
     const tableHeaders = [
       [
@@ -226,7 +265,7 @@ const ModalLihatRiwayatTransaksi = ({
     doc.autoTable({
       head: tableHeaders,
       body: tableData,
-      startY: 90,
+      startY: 100,
       styles: {
         fontSize: 10,
         cellPadding: 5,
@@ -253,6 +292,7 @@ const ModalLihatRiwayatTransaksi = ({
       },
     });
 
+    // Total Harga
     const totalHarga = dataKeranjang.reduce(
       (total, item) => total + item.Harga * item.Kuantitas,
       0
@@ -262,6 +302,7 @@ const ModalLihatRiwayatTransaksi = ({
     doc.setTextColor(0, 0, 0);
     doc.text(`Total Pesanan: ${formatRupiah(totalHarga)}`, 14, akhirY);
 
+    // Catatan
     doc.setFontSize(10);
     doc.text(
       "Catatan: Harap simpan invoice ini untuk referensi.",
@@ -271,10 +312,12 @@ const ModalLihatRiwayatTransaksi = ({
 
     doc.line(14, akhirY + 18, 196, akhirY + 18);
 
+    // Pesan Penutup
     doc.setFontSize(10);
     doc.setTextColor(41, 128, 185);
     doc.text("Terima kasih atas pembelian Anda!", 14, akhirY + 30);
 
+    // Kontak
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text(
@@ -499,6 +542,8 @@ const ModalLihatRiwayatTransaksi = ({
                           <Image
                             src={bukti || gambarBawaan}
                             alt={"Tidak ada nama"}
+                            className="cursor-pointer m-5 hover:scale-105 duration-300"
+                            onClick={() => window.open(bukti, "_blank")}
                             width={100}
                             height={100}
                           />
@@ -601,7 +646,11 @@ const ModalLihatRiwayatTransaksi = ({
                       : [transaksiTerpilih.penerimaan?.File || gambarBawaan]
                     ).map((penerimaan, indeks) => (
                       <div key={indeks} className="flex items-center gap-3">
-                        <embed src={penerimaan || gambarBawaan} />
+                        <embed
+                          onClick={() => window.open(penerimaan, "_blank")}
+                          className="cursor-pointer m-5 hover:scale-105 duration-300"
+                          src={penerimaan || gambarBawaan}
+                        />
                       </div>
                     ))}
                   </td>

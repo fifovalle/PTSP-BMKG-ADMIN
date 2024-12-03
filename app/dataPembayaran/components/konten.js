@@ -20,7 +20,7 @@ import ModalLihatPembayaran from "@/components/modalLihatPembayaran";
 // KONSTANTA KAMI
 import { formatTanggal } from "@/constants/formatTanggal";
 
-const judulTabel = ["Pembeli", "Tanggal Pemesanan", ""];
+const judulTabel = ["Pembeli", "Produk", "Tanggal Pemesanan", ""];
 
 function Konten({ tahunDipilih }) {
   const gambarBawaan = require("@/assets/images/profil.jpg");
@@ -105,7 +105,16 @@ function Konten({ tahunDipilih }) {
                     pemesanan.Status_Pembayaran === "Sedang Ditinjau"
                 )
                 .map(
-                  ({ id, pengguna, Tanggal_Pemesanan, Keterangan }, index) => {
+                  (
+                    {
+                      id,
+                      pengguna,
+                      Data_Keranjang,
+                      Tanggal_Pemesanan,
+                      Keterangan,
+                    },
+                    index
+                  ) => {
                     const apakahTerakhir = index === saringPemesanan.length - 1;
                     const kelas = apakahTerakhir
                       ? "p-4"
@@ -139,6 +148,18 @@ function Konten({ tahunDipilih }) {
                               </Typography>
                             </div>
                           </div>
+                        </td>
+                        <td className={kelas}>
+                          {Data_Keranjang.map((Data_Keranjang, indeks) => (
+                            <Typography
+                              key={indeks}
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {Data_Keranjang.Nama}
+                            </Typography>
+                          ))}
                         </td>
                         <td className={kelas}>
                           <Typography
