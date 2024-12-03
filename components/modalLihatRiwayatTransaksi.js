@@ -12,7 +12,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { AiOutlineDownload } from "react-icons/ai";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { PDFDocument } from "pdf-lib";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { getDownloadURL, ref } from "firebase/storage";
