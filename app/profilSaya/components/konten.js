@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import Image from "next/image";
 // KOMPONEN KAMI
@@ -13,9 +13,16 @@ function Konten() {
   const gambarBawaan = require("@/assets/images/profil.jpg");
   const [tampilkanInfo, setTampilkanInfo] = useState(true);
   const [tampilkanSunting, setTampilkanSunting] = useState(false);
+  const [idAdmin, setIdAdmin] = useState(null);
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
-  const idAdmin = localStorage.getItem("ID_Admin");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedIdAdmin = localStorage.getItem("ID_Admin");
+      setIdAdmin(storedIdAdmin);
+    }
+  }, []);
 
   const tanganiTampilkanInfo = () => {
     setTampilkanInfo(true);
