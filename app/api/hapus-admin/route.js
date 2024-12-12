@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
-import path from "path";
 import { doc, deleteDoc } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
-const serviceAccount = path.resolve(process.cwd(), "services/akses.json");
-
 if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     projectId: "ptsp-bmkg-4eee9",
