@@ -3,13 +3,25 @@ import admin from "firebase-admin";
 import { doc, deleteDoc } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+const serviceAccount = process.env.FIREBASE_CREDENTIALS
+  ? JSON.parse(process.env.FIREBASE_CREDENTIALS)
+  : null;
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    projectId: "ptsp-bmkg-4eee9",
-  });
+if (!serviceAccount) {
+  throw new Error(
+    "Environment variable FIREBASE_CREDENTIALS is not defined or invalid."
+  );
+}
+
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: "ptsp-bmkg-4eee9",
+    });
+  } catch (error) {
+    console.error("Firebase admin initialization error", error);
+  }
 }
 
 export async function POST(req) {
