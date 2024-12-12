@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 // KOMPONEN KAMI
 const Sidebar = dynamic(() => import("@/components/sidebar"), { ssr: false });
 const Napbar = dynamic(() => import("@/components/navbar"), { ssr: false });
-const Konten = dynamic(() => import("@/app/Beranda/components/konten"), {
+const Konten = dynamic(() => import("@/app/beranda/components/konten"), {
   ssr: false,
 });
 
