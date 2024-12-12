@@ -4,6 +4,7 @@ import { doc, deleteDoc } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
 const firebaseCredentials = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS);
+console.log("Firebase credentials:", firebaseCredentials);
 
 if (!admin.apps.length) {
   admin.initializeApp({
