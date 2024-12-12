@@ -1,16 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // KOMPONEN KAMI
-import Sidebar from "@/components/sidebar";
-import Napbar from "@/components/navbar";
-import Konten from "@/app/beranda/components/konten";
+const Sidebar = dynamic(() => import("@/components/sidebar"), { ssr: false });
+const Napbar = dynamic(() => import("@/components/navbar"), { ssr: false });
+const Konten = dynamic(() => import("@/app/Beranda/components/konten"), {
+  ssr: false,
+});
 
 const Beranda = () => {
   const pengarah = useRouter();
   const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <section className="p-4 flex h-screen bg-[#eff0f3]">

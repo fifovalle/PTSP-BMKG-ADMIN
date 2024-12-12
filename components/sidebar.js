@@ -51,7 +51,9 @@ function Sidebar({ pengarah }) {
   const { jumlahData, sedangMemuatBanyakData } = useTampilkanBanyakData();
 
   useEffect(() => {
-    setLokasiSaatIni(window.location.pathname);
+    if (typeof window !== "undefined") {
+      setLokasiSaatIni(window.location.pathname);
+    }
   }, []);
 
   const { keluar } = useKeluarAkun();
@@ -72,9 +74,9 @@ function Sidebar({ pengarah }) {
 
       <List>
         <ListItem
-          onClick={() => pengarah.push("/beranda")}
+          onClick={() => pengarah.push("/Beranda")}
           className={
-            lokasiSaatIni === "/beranda" ? "bg-[#0F67B1] text-white" : ""
+            lokasiSaatIni === "/Beranda" ? "bg-[#0F67B1] text-white" : ""
           }
         >
           <ListItemPrefix>
