@@ -77,7 +77,7 @@ Jelajahi karya terbaru kami dalam mengembangkan sistem administrasi berbasis apl
 
 ## 📷 Preview Halaman
 
-Berikut adalah beberapa tampilan halaman TIKET KERETA:
+Berikut adalah beberapa tampilan halaman PTSP BMKG Admin:
 
 ![proyek33](https://github.com/user-attachments/assets/da494c49-39a8-43bd-a158-a91f38e94ab5)
 
