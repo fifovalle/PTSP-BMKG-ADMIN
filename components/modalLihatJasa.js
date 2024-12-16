@@ -26,7 +26,7 @@ const ModalLihatJasa = ({ terbuka, tertutup, jasaYangTerpilih }) => {
         mount: { scale: 1, y: 0 },
         unmount: { scale: 0.9, y: -100 },
       }}
-      size="sm"
+      size="xl"
       className="bg-white max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-4 rounded-lg shadow-2xl"
     >
       <div className="absolute top-3 right-3">

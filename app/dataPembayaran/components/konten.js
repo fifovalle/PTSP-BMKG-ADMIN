@@ -9,6 +9,7 @@ import {
   CardFooter,
   IconButton,
   Tooltip,
+  Chip,
 } from "@material-tailwind/react";
 import Image from "next/image";
 // PENGAIT KAMI
@@ -94,15 +95,17 @@ function Konten({ tahunDipilih }) {
               ))}
             </tr>
           </thead>
-
           <tbody>
             {saringPemesanan.filter(
-              (pemesanan) => pemesanan.Status_Pembayaran === "Sedang Ditinjau"
+              (pemesanan) =>
+                pemesanan.Status_Pembayaran === "Sedang Ditinjau" ||
+                pemesanan.Status_Pembayaran === "Ditolak"
             ).length > 0 ? (
               saringPemesanan
                 .filter(
                   (pemesanan) =>
-                    pemesanan.Status_Pembayaran === "Sedang Ditinjau"
+                    pemesanan.Status_Pembayaran === "Sedang Ditinjau" ||
+                    pemesanan.Status_Pembayaran === "Ditolak"
                 )
                 .map(
                   (
@@ -112,6 +115,7 @@ function Konten({ tahunDipilih }) {
                       Data_Keranjang,
                       Tanggal_Pemesanan,
                       Keterangan,
+                      Status_Pembayaran,
                     },
                     index
                   ) => {
@@ -171,30 +175,42 @@ function Konten({ tahunDipilih }) {
                           </Typography>
                         </td>
                         <td className={kelas}>
-                          <Tooltip content="Lihat Selengkapnya">
-                            <IconButton
-                              onClick={() => {
-                                setPembuatanTerpilih(id);
-                                setKeteranganTerpilih(Keterangan || "");
-                                setBukaModalLihatPembayaran(true);
-                              }}
-                              variant="text"
-                            >
-                              <AiFillEye className="h-4 w-4" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip content="Sunting">
-                            <IconButton
-                              onClick={() => {
-                                setPembuatanTerpilih(id);
-                                setKeteranganTerpilih(Keterangan || "");
-                                setBukaModalSuntingPembayaran(true);
-                              }}
-                              variant="text"
-                            >
-                              <AiOutlineUpload className="h-4 w-4" />
-                            </IconButton>
-                          </Tooltip>
+                          {Status_Pembayaran === "Ditolak" ? (
+                            <Chip
+                              variant="ghost"
+                              size="sm"
+                              value={Status_Pembayaran}
+                              color="red"
+                              className="text-center"
+                            />
+                          ) : (
+                            <>
+                              <Tooltip content="Lihat Selengkapnya">
+                                <IconButton
+                                  onClick={() => {
+                                    setPembuatanTerpilih(id);
+                                    setKeteranganTerpilih(Keterangan || "");
+                                    setBukaModalLihatPembayaran(true);
+                                  }}
+                                  variant="text"
+                                >
+                                  <AiFillEye className="h-4 w-4" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip content="Sunting">
+                                <IconButton
+                                  onClick={() => {
+                                    setPembuatanTerpilih(id);
+                                    setKeteranganTerpilih(Keterangan || "");
+                                    setBukaModalSuntingPembayaran(true);
+                                  }}
+                                  variant="text"
+                                >
+                                  <AiOutlineUpload className="h-4 w-4" />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
                         </td>
                       </tr>
                     );
@@ -202,7 +218,7 @@ function Konten({ tahunDipilih }) {
                 )
             ) : (
               <tr>
-                <td colSpan="3" className="p-4 text-center text-gray-500">
+                <td colSpan="4" className="p-4 text-center text-gray-500">
                   Tidak Ada Data
                 </td>
               </tr>

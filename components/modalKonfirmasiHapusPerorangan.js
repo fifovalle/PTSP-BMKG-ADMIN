@@ -26,7 +26,7 @@ const ModalKonfirmasiHapusPerorangan = ({
         mount: { scale: 1, y: 0 },
         unmount: { scale: 0.9, y: -100 },
       }}
-      size="md"
+      size="xl"
       className="bg-[#fff] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
     >
       <div className="absolute top-3 right-3">

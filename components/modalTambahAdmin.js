@@ -50,7 +50,7 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
         mount: { scale: 1, y: 0 },
         unmount: { scale: 0.9, y: -100 },
       }}
-      size="md"
+      size="xl"
       className="bg-white max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-4"
     >
       <div className="absolute top-3 right-3">
