@@ -79,7 +79,7 @@ Jelajahi karya terbaru kami dalam mengembangkan sistem administrasi berbasis apl
 
 Berikut adalah beberapa tampilan halaman PTSP BMKG Admin:
 
-![proyek33](https://github.com/user-attachments/assets/da494c49-39a8-43bd-a158-a91f38e94ab5)
+![proyek90](https://github.com/user-attachments/assets/0de40d37-5a61-4b5e-b267-c38ae6c4449c)
 
 ---
 
