@@ -117,9 +117,7 @@ function Konten({ tahunDipilih }) {
 
           <tbody>
             {saringPengajuan.filter(
-              ({ ajukan }) =>
-                ajukan.Status_Ajuan !== "Diterima" &&
-                ajukan.Status_Ajuan !== "Ditolak"
+              ({ ajukan }) => ajukan.Status_Ajuan !== "Diterima"
             ).length === 0 ? (
               <tr>
                 <td colSpan="4" className="p-4 text-center text-blue-gray-500">
@@ -128,11 +126,7 @@ function Konten({ tahunDipilih }) {
               </tr>
             ) : (
               daftarPengajuan
-                .filter(
-                  ({ ajukan }) =>
-                    ajukan.Status_Ajuan !== "Diterima" &&
-                    ajukan.Status_Ajuan !== "Ditolak"
-                )
+                .filter(({ ajukan }) => ajukan.Status_Ajuan !== "Diterima")
                 .map(({ id, pengguna, Data_Keranjang, ajukan }, index) => {
                   const apakahTerakhir = index === daftarPengajuan.length - 1;
                   const kelas = apakahTerakhir
